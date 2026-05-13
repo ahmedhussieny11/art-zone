@@ -1,0 +1,34 @@
+[
+  {
+    "_id": "t1",
+    "clientName": "أحمد الراشد",
+    "quote": "آرت زون حولوا رؤيتنا إلى تحفة فنية حية. اهتمامهم بالتفاصيل وفهمهم للفخامة لا مثيل له.",
+    "avatar": null,
+    "projectTitle": "فيلا عصرية",
+    "projectSlug": "modern-villa-interior"
+  },
+  {
+    "_id": "t2",
+    "clientName": "سارة الموسى",
+    "quote": "العمل مع آرت زون كان تجربة رائعة. تجاوزوا توقعاتنا وابتكروا مساحة تعكس هوية علامتنا التجارية بشكل مثالي.",
+    "avatar": null,
+    "projectTitle": "مكتب فاخر",
+    "projectSlug": "luxury-office-space"
+  },
+  {
+    "_id": "t3",
+    "clientName": "خالد الفهد",
+    "quote": "الحرفية والإبداع الذي قدموه في تصميم مجلسنا كان استثنائياً. مزيج مثالي بين التقاليد والراحة العصرية.",
+    "avatar": null,
+    "projectTitle": "مجلس كلاسيكي",
+    "projectSlug": "classic-majlis-design"
+  },
+  {
+    "_id": "mp2dsb68kkmfpd",
+    "clientName": "احمد الحسيني ",
+    "quote": "تصاميم خطيرة جدا",
+    "avatar": null,
+    "projectTitle": "",
+    "projectSlug": ""
+  }
+]

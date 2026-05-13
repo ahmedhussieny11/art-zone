@@ -1,0 +1,120 @@
+[
+  {
+    "_id": "1",
+    "title": "فيلا عصرية",
+    "slug": "modern-villa-interior",
+    "category": "residential",
+    "coverImage": "/uploads/1778575584817-owoyc2.png",
+    "concept": "مشروع سكني معاصر يمزج بين الجماليات البسيطة والمواد الطبيعية الدافئة. يركز التصميم على المساحات المفتوحة والخطوط النظيفة ولوحة ألوان محايدة مع لمسات من الذهب الشامبانيا.",
+    "gallery": [
+      "/uploads/1778575593088-493vpm.jpg",
+      "/uploads/1778575593089-c4003w.jpg",
+      "/uploads/1778575593090-ydsuh5.jpg"
+    ],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "رخام إيطالي",
+      "خشب بلوط",
+      "نحاس مصقول",
+      "كتان"
+    ],
+    "featured": true,
+    "createdAt": "2026-05-12T08:34:34.766Z"
+  },
+  {
+    "_id": "2",
+    "title": "مكتب فاخر",
+    "slug": "luxury-office-space",
+    "category": "commercial",
+    "coverImage": "/uploads/1778575682971-jbrls8.png",
+    "concept": "بيئة مكتبية تنفيذية مصممة لإلهام الإنتاجية مع الحفاظ على أجواء الأناقة الراقية. المواد الفاخرة والأثاث المصمم خصيصاً يحددان كل زاوية.",
+    "gallery": [],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "قشرة جوز",
+      "زجاج مدخن",
+      "جلد",
+      "نحاس"
+    ],
+    "featured": true,
+    "createdAt": "2026-05-12T08:34:34.767Z"
+  },
+  {
+    "_id": "3",
+    "title": "مجلس كلاسيكي",
+    "slug": "classic-majlis-design",
+    "category": "classic",
+    "coverImage": "/uploads/1778575701948-s02ogw.jpg",
+    "concept": "مجلس تقليدي أُعيد تصوره بحرفية كلاسيكية وأقمشة فاخرة. تتمازج النقوش المزخرفة مع لمسات عصرية دقيقة لخلق مساحة تحترم التراث وتحتضن الراحة.",
+    "gallery": [],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "قماش حريري",
+      "ذهب عيار",
+      "كريستال",
+      "خشب منحوت"
+    ],
+    "featured": true,
+    "createdAt": "2026-05-12T08:34:34.767Z"
+  },
+  {
+    "_id": "4",
+    "title": "لوبي فندق بوتيك",
+    "slug": "boutique-hotel-lobby",
+    "category": "commercial",
+    "coverImage": null,
+    "concept": "لوبي مميز لفندق بوتيك، مصمم لجذب الضيوف من لحظة وصولهم. إضاءة درامية وقطع فنية منتقاة وأثاث فاخر يخلقون انطباعاً أولياً لا يُنسى.",
+    "gallery": [],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "ترافيرتين",
+      "مخمل",
+      "برونز معتق",
+      "أونيكس"
+    ],
+    "featured": false,
+    "createdAt": "2026-05-12T08:34:34.767Z"
+  },
+  {
+    "_id": "5",
+    "title": "بنتهاوس عصري",
+    "slug": "modern-penthouse-suite",
+    "category": "modern",
+    "coverImage": null,
+    "concept": "بنتهاوس في أعالي المدينة حيث تلتقي النوافذ الممتدة من الأرض إلى السقف بالتصميم العصري الأنيق.",
+    "gallery": [],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "خرسانة مصقولة",
+      "فولاذ أسود",
+      "بلوط أبيض",
+      "زجاج"
+    ],
+    "featured": false,
+    "createdAt": "2026-05-12T08:34:34.767Z"
+  },
+  {
+    "_id": "6",
+    "title": "ترميم قصر تراثي",
+    "slug": "heritage-palace-renovation",
+    "category": "classic",
+    "coverImage": null,
+    "concept": "ترميم دقيق لقصر تراثي يحافظ على عظمته التاريخية مع إدخال وسائل الراحة الحديثة بسلاسة.",
+    "gallery": [],
+    "beforeImage": null,
+    "afterImage": null,
+    "materials": [
+      "بلاط يدوي",
+      "خشب أرز",
+      "زجاج معشق",
+      "جبس مزخرف"
+    ],
+    "featured": false,
+    "createdAt": "2026-05-12T08:34:34.767Z"
+  }
+]

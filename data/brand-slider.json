@@ -1,0 +1,55 @@
+{
+  "enabled": true,
+  "sectionEyebrow": "ديكور · تشطيبات · تصميم داخلي",
+  "sectionTitle": "",
+  "showSectionHeader": true,
+  "showTextOverlay": true,
+  "showCta": true,
+  "cta1Text": "معرض الأعمال",
+  "cta1Href": "/portfolio",
+  "cta2Text": "استشارة تصميم",
+  "cta2Href": "/contact",
+  "autoMs": 6500,
+  "animation": "soft3d",
+  "parallax": "medium",
+  "aspectPreset": "21/9",
+  "sizePreset": "full",
+  "slides": [
+    {
+      "id": "living-1",
+      "src": "/slider-showcase-1.png",
+      "title": "",
+      "subtitle": ""
+    },
+    {
+      "id": "dining-1",
+      "src": "/slider-showcase-2.png",
+      "title": "",
+      "subtitle": ""
+    },
+    {
+      "id": "lounge",
+      "src": "/slider-showcase-3.png",
+      "title": "",
+      "subtitle": ""
+    },
+    {
+      "id": "dining-2",
+      "src": "/slider-showcase-4.png",
+      "title": "",
+      "subtitle": ""
+    },
+    {
+      "id": "open",
+      "src": "/slider-showcase-5.png",
+      "title": "",
+      "subtitle": ""
+    },
+    {
+      "id": "tv",
+      "src": "/slider-showcase-6.png",
+      "title": "",
+      "subtitle": ""
+    }
+  ]
+}

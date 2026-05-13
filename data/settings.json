@@ -1,0 +1,250 @@
+{
+  "logo": "/uploads/1778576435589-rtrzeo.png",
+  "siteName": "ARTZONE",
+  "siteDescription": "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
+  "headerCtaText": "احصل على عرض سعر",
+  "headerCtaLink": "/contact",
+  "footerText": "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
+  "copyrightText": "آرت زون للتصميم. جميع الحقوق محفوظة.",
+  "whatsappNumber": "+20155555555",
+  "whatsappMessage": "مرحباً، أود الاستفسار عن خدمات التصميم الداخلي",
+  "whatsappEnabled": true,
+  "email": "info@artzonedesign.com",
+  "address": "مدينتي, القاهرة",
+  "addressNote": "بموعد مسبق فقط",
+  "instagramHandle": "@artzonedesign",
+  "workingHours": "الأحد - الخميس: 9:00 صباحاً - 6:00 مساءً",
+  "closedDays": "الجمعة - السبت: مغلق",
+  "googleMapsUrl": null,
+  "googleMapsEnabled": false,
+  "contactPageTitle": "اتصل بنا",
+  "contactPageSubtitle": "يسعدنا سماع تفاصيل مشروعك. تواصل معنا ولنبتكر شيئاً استثنائياً معاً.",
+  "contactFormTitle": "طلب استشارة",
+  "contactFormSubtitle": "املأ النموذج أدناه وسيتواصل فريقنا معك خلال 24 ساعة.",
+  "fontScale": 100,
+  "heroLabel": "استوديو تصميم داخلي فاخر",
+  "heroTitle": "نصنع مساحات تُلهم الإبداع",
+  "heroSubtitle": "من الفكرة إلى التنفيذ، نحوّل المساحات العادية إلى تجارب استثنائية. كل تفصيلة مصممة بدقة وشغف وهدف.",
+  "heroCta1Text": "شاهد أعمالنا",
+  "heroCta1Link": "/portfolio",
+  "heroCta2Text": "احجز استشارة",
+  "heroCta2Link": "/contact",
+  "aboutLabel": "من نحنا",
+  "aboutTitle": "نُعرّف الفخامة من خلال التصميم",
+  "aboutDescription": "في آرت زون للتصميم، نؤمن بأن المساحات الاستثنائية تروي قصة. فريقنا من المصممين المبدعين والحرفيين المهرة يعملون معاً لابتكار بيئات مذهلة وعملية في آنٍ واحد. بخبرة تزيد عن عقد من الزمن في التصميم الداخلي الفاخر، اكتسبنا ثقة العملاء المميزين في المنطقة.",
+  "projectsLabel": "أعمالنا",
+  "projectsTitle": "مشاريع مميزة",
+  "projectsDescription": "مجموعة مختارة من أبرز مشاريع التصميم الداخلي لدينا.",
+  "testimonialsLabel": "آراء العملاء",
+  "testimonialsTitle": "ماذا يقول عملاؤنا",
+  "ctaBannerTitle": "هل لديك مشروع في ذهنك؟",
+  "ctaBannerDescription": "دعنا نحول رؤيتك إلى واقع. تواصل معنا اليوم لبدء رحلة التصميم.",
+  "ctaBannerButtonText": "تواصل معنا عبر واتساب",
+  "sectionLabelSize": "sm",
+  "sectionTitleSize": "3xl",
+  "sectionBodySize": "base",
+  "socialSectionEnabled": true,
+  "socialSectionLabel": "تابعنا",
+  "socialSectionTitle": "aaaaaaaaa",
+  "socialSectionDescription": "تابع رحلتنا على السوشيال ميديا لمشاهدة أحدث المشاريع والكواليس.",
+  "socialSectionImages": [
+    "/uploads/1778596329433-9orayk.jpeg",
+    "/uploads/1778596329435-scwpis.jpeg",
+    "/uploads/1778596329436-09o28q.jpeg",
+    "/uploads/1778596329437-m8mukt.jpeg",
+    "/uploads/1778596329438-gsazb7.jpeg",
+    "/uploads/1778596329439-aj43ae.jpeg",
+    "/uploads/1778596329440-edjz72.jpeg",
+    "/uploads/1778596329441-v0dhmh.jpeg",
+    "/uploads/1778596329442-lkyrqo.jpeg",
+    "/uploads/1778596329443-jsqadi.jpeg"
+  ],
+  "socialSectionButtonText": "تابعنا على انستغرام",
+  "socialSectionClickAction": "lightbox",
+  "socialSectionCustomLink": "",
+  "socialLinks": {
+    "instagram": "",
+    "facebook": "https://www.facebook.com/ArtZoneDesignforLuxuryInteriors",
+    "twitter": "",
+    "tiktok": "",
+    "youtube": "",
+    "snapchat": "",
+    "linkedin": ""
+  },
+  "socialLinksShow": {
+    "instagram": true,
+    "facebook": true,
+    "twitter": true,
+    "tiktok": true,
+    "youtube": true,
+    "snapchat": false,
+    "linkedin": false
+  },
+  "servicesPageLabel": "ماذا نقدم",
+  "servicesPageTitle": "خدماتنا",
+  "servicesPageDescription": "من الفكرة الأولى إلى التنفيذ النهائي، نقدم حلول تصميم شاملة مصممة خصيصاً لرؤيتك الفريدة.",
+  "servicesPageButtonText": "اطلب الخدمة",
+  "heroKeywordsEnabled": true,
+  "heroKeywords": [
+    "تصميم داخلي",
+    "فاخر",
+    "إبداعي",
+    "عصري",
+    "أنيق",
+    "مميّز",
+    "احترافي",
+    "راقي"
+  ],
+  "bentoBadgeText": "بخبرة تزيد عن عقد من الزمن",
+  "bentoFeatures": [
+    {
+      "title": "استشارات التصميم",
+      "description": "نبدأ معك من الفكرة الأولى ونرسم خارطة طريق واضحة لمشروعك.",
+      "icon": "compass"
+    },
+    {
+      "title": "التصميم الداخلي",
+      "description": "تصاميم ثلاثية الأبعاد تجمع بين الجمال والوظيفة بدقة متناهية.",
+      "icon": "palette"
+    },
+    {
+      "title": "الإشراف والتنفيذ",
+      "description": "متابعة يومية لكل تفصيلة لضمان مطابقة النتائج لرؤيتك.",
+      "icon": "ruler"
+    },
+    {
+      "title": "تأثيث وتنسيق",
+      "description": "اختيار الأثاث والإكسسوارات التي تكمل هوية المكان بتناغم.",
+      "icon": "armchair"
+    }
+  ],
+  "bentoStats": [
+    {
+      "value": "150+",
+      "label": "مشروع مكتمل"
+    },
+    {
+      "value": "12+",
+      "label": "سنوات خبرة"
+    },
+    {
+      "value": "98%",
+      "label": "رضا العملاء"
+    }
+  ],
+  "processLabel": "كيف نعمل",
+  "processTitle": "مراحل العمل",
+  "processDescription": "رحلة سلسة من فكرتك الأولى إلى مساحة متكاملة.",
+  "processSteps": [
+    {
+      "step": "٠١",
+      "title": "الاستشارة",
+      "description": "نبدأ باستشارة معمّقة لفهم رؤيتك وأسلوب حياتك ومتطلباتك."
+    },
+    {
+      "step": "٠٢",
+      "title": "تطوير المفهوم",
+      "description": "يبتكر مصممونا مفهوماً شاملاً يتضمن لوحات الإلهام والتخطيطات واختيار المواد."
+    },
+    {
+      "step": "٠٣",
+      "title": "التصميم والتفاصيل",
+      "description": "يتم صقل كل عنصر بالرسومات الفنية والتصورات ثلاثية الأبعاد والمواصفات التفصيلية."
+    },
+    {
+      "step": "٠٤",
+      "title": "التنفيذ",
+      "description": "فريقنا يدير عملية البناء بالكامل، لضمان تنفيذ التصميم بأعلى المعايير."
+    }
+  ],
+  "colors": {
+    "offwhite": "#ffffff",
+    "charcoal": "#2C2C2C",
+    "warmgray": "#8A8078",
+    "gold": "#C9A96E",
+    "goldLight": "#D4BA8A",
+    "goldDark": "#B89555"
+  },
+  "servicesColors": {
+    "heroBg": "#2C2C2C",
+    "heroText": "#FFFFFF",
+    "cardBg": "#FFFFFF",
+    "cardText": "#2C2C2C",
+    "processBg": "#FFFFFF"
+  },
+  "projectCategories": [
+    {
+      "value": "residential",
+      "label": "سكني"
+    },
+    {
+      "value": "commercial",
+      "label": "تجاري"
+    },
+    {
+      "value": "classic",
+      "label": "كلاسيكي"
+    },
+    {
+      "value": "modern",
+      "label": "عصري"
+    }
+  ],
+  "articleCategories": [
+    {
+      "value": "design-tips",
+      "label": "نصائح التصميم"
+    },
+    {
+      "value": "trends",
+      "label": "اتجاهات التصميم"
+    },
+    {
+      "value": "inspiration",
+      "label": "إلهام"
+    },
+    {
+      "value": "guides",
+      "label": "أدلة ومراجع"
+    }
+  ],
+  "zoomPortalEnabled": true,
+  "zoomPortalScrollHeight": "500vh",
+  "zoomPortalBgColor": "#2C2C2C",
+  "zoomPortalVignetteOpacity": 0.72,
+  "zoomPortalGrainOpacity": 0.04,
+  "zoomPortalAccentColor": "#C9A96E",
+  "zoomPortalTopBadge": "بوابة التصميم",
+  "zoomPortalTopHint": "انزل لتدخل عالمنا",
+  "zoomPortalFinalTitle": "كل تفصيلة تحكي قصة",
+  "zoomPortalFinalTitleColor": "#2C2C2C",
+  "zoomPortalFinalSub": "من السفرة إلى الانتريه — نصمم مساحات تعيش فيها التفاصيل",
+  "zoomPortalFinalSubColor": "rgba(255,255,255,0.50)",
+  "zoomPortalCta1Text": "استكشف أعمالنا",
+  "zoomPortalCta1Link": "/portfolio",
+  "zoomPortalCta1Bg": "#C9A96E",
+  "zoomPortalCta1Color": "#ffffff",
+  "zoomPortalCta2Text": "تواصل معنا",
+  "zoomPortalCta2Link": "/contact",
+  "zoomPortalCta2Color": "rgba(255,255,255,0.70)",
+  "zoomPortalLayer1Src": "/portal-1-overview.jpg",
+  "zoomPortalLayer1Label": "زون آرت",
+  "zoomPortalLayer1ZoomOrigin": "70%70%",
+  "zoomPortalLayer2Src": "/portal-2-dining.jpg",
+  "zoomPortalLayer2Label": "السفرة",
+  "zoomPortalLayer2ZoomOrigin": "30% 30%",
+  "zoomPortalLayer3Src": "/portal-3-living.jpg",
+  "zoomPortalLayer3Label": "الانتريه",
+  "zoomPortalLayer3ZoomOrigin": "50% 50%",
+  "homeBlogEnabled": true,
+  "homeBlogLabel": "المدونة",
+  "homeBlogTitle": "أحدث المقالات",
+  "homeBlogDescription": "نصائح واتجاهات في التصميم الداخلي من فريق آرت زون.",
+  "homeBlogArticleIds": [
+    "a1",
+    "a2",
+    "mp2w5gn6afyjtb"
+  ],
+  "homeBlogLimit": 3,
+  "homeBlogCtaText": "عرض جميع المقالات"
+}

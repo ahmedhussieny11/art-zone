@@ -1,0 +1,53 @@
+{
+  "enabled": true,
+  "scrollHeight": "500vh",
+  "bgColor": "#2C2C2C",
+  "vignetteOpacity": 0.72,
+  "grainOpacity": 0.04,
+  "accentColor": "#C9A96E",
+  "topBadge": "بوابة التصميم",
+  "topHint": "انزل لتدخل عالمنا",
+  "finalTitle": "كل تفصيلة تحكي قصة",
+  "finalTitleColor": "#C9A96E",
+  "finalSub": "من السفرة إلى الانتريه — نصمم مساحات تعيش فيها التفاصيل",
+  "finalSubColor": "rgba(255,255,255,0.50)",
+  "cta1Text": "استكشف أعمالنا",
+  "cta1Link": "/portfolio",
+  "cta1Bg": "#C9A96E",
+  "cta1Color": "#ffffff",
+  "cta2Text": "تواصل معنا",
+  "cta2Link": "/contact",
+  "cta2Color": "rgba(255,255,255,0.70)",
+  "layers": [
+    {
+      "id": "layer-1",
+      "src": "/portal-1-overview.jpg",
+      "label": "زون آرت",
+      "zoomOriginX": 71.8,
+      "zoomOriginY": 60,
+      "maxZoom": 2,
+      "entryScale": 0.5,
+      "hotspots": []
+    },
+    {
+      "id": "layer-2",
+      "src": "/portal-2-dining.jpg",
+      "label": "السفرة",
+      "zoomOriginX": 63.1,
+      "zoomOriginY": 55.2,
+      "maxZoom": 2,
+      "entryScale": 0.5,
+      "hotspots": []
+    },
+    {
+      "id": "layer-3",
+      "src": "/portal-3-living.jpg",
+      "label": "الانتريه",
+      "zoomOriginX": 50,
+      "zoomOriginY": 50,
+      "maxZoom": 2,
+      "entryScale": 0.5,
+      "hotspots": []
+    }
+  ]
+}
