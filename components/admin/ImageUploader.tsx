@@ -9,6 +9,133 @@ interface ImageUploaderProps {
   onChange: (url: string | null) => void;
 }
 
+interface FileUploaderProps {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+  /** HTML accept attribute, e.g. "video/*" */
+  accept?: string;
+  /** Optional human-readable hint, e.g. "MP4 / WebM — 50 MB كحد أقصى" */
+  hint?: string;
+}
+
+export function VideoUploader({
+  label,
+  value,
+  onChange,
+  accept = "video/*",
+  hint,
+}: FileUploaderProps) {
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setProgress(0);
+
+    const fd = new FormData();
+    fd.append("files", file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/admin/upload");
+    xhr.upload.onprogress = (ev) => {
+      if (ev.lengthComputable) {
+        setProgress(Math.round((ev.loaded / ev.total) * 100));
+      }
+    };
+    xhr.onload = () => {
+      try {
+        const data = JSON.parse(xhr.responseText) as { paths?: string[] };
+        if (data.paths?.[0]) onChange(data.paths[0]);
+      } catch {
+        /* ignore */
+      }
+      setUploading(false);
+      setProgress(0);
+      if (inputRef.current) inputRef.current.value = "";
+    };
+    xhr.onerror = () => {
+      setUploading(false);
+      setProgress(0);
+    };
+    xhr.send(fd);
+  }
+
+  return (
+    <div>
+      <label className="mb-2 block text-xs font-medium text-charcoal">
+        {label}
+      </label>
+
+      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
+        {value ? (
+          <div className="relative overflow-hidden rounded-lg bg-black">
+            <video
+              src={value}
+              controls
+              muted
+              playsInline
+              className="h-48 w-full object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-xs text-white shadow-lg hover:bg-red-600"
+              title="حذف"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-warmgray">
+            <span className="text-xs">لا يوجد فيديو</span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-3">
+          <input
+            value={value}
+            dir="ltr"
+            placeholder="/scroll-video.mp4 أو https://…"
+            onChange={(e) => onChange(e.target.value)}
+            className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs outline-none focus:border-gold"
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="rounded-lg bg-gold px-4 py-2 text-xs font-medium text-white hover:bg-gold-dark disabled:opacity-50"
+          >
+            {uploading ? `${progress}%` : "رفع فيديو"}
+          </button>
+        </div>
+
+        {uploading && (
+          <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200">
+            <div
+              className="h-full bg-gold transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+
+        {hint && <p className="text-[10px] text-warmgray">{hint}</p>}
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        onChange={handleUpload}
+        className="hidden"
+      />
+    </div>
+  );
+}
+
 export function SingleImageUploader({ label, value, onChange }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

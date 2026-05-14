@@ -2,6 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import BrandBannerSlider from "@/components/BrandBannerSlider";
 import BentoGrid from "@/components/BentoGrid";
 import FeaturedProjects from "@/components/FeaturedProjects";
+import VideoScrollSection from "@/components/VideoScrollSection";
 import ZoomPortal from "@/components/ZoomPortal";
 import StepsSection from "@/components/StepsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -10,11 +11,13 @@ import CTABanner from "@/components/CTABanner";
 import LatestArticles from "@/components/LatestArticles";
 import { getProjects, getTestimonials, getSettings, getHomePageArticles, getBrandSliderConfig } from "@/lib/data";
 import { getZoomPortalConfig } from "@/lib/zoom-portal-data";
+import { getVideoScrollConfig } from "@/lib/video-scroll-data";
 
 export default function HomePage() {
   const settings = getSettings();
   const zoomPortalCfg = getZoomPortalConfig();
   const brandSlider = getBrandSliderConfig();
+  const videoScrollCfg = getVideoScrollConfig();
 
   const projects = getProjects()
     .filter((p) => p.featured)
@@ -83,6 +86,7 @@ export default function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
+      {videoScrollCfg.enabled && <VideoScrollSection config={videoScrollCfg} />}
       {zoomPortalCfg.enabled && <ZoomPortal config={zoomPortalCfg} />}
       <StepsSection
         labelSize={settings.sectionLabelSize}
