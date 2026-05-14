@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
 import { getSettings, getPublicSiteUrl } from "@/lib/data";
-import { getSiteTabIconUrl } from "@/lib/site-icon";
+import { normalizeMediaPath } from "@/lib/media-url";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -20,53 +20,30 @@ const cairo = Cairo({
   display: "swap",
 });
 
+/** المسار النسبي للأيقونة (للـ <link> المباشر في <head>) */
+function getIconRelativePath(): string | null {
+  const s = getSettings();
+  const raw = (s.siteFavicon && s.siteFavicon.trim()) || (s.logo && s.logo.trim()) || "";
+  if (!raw) return null;
+  const p = normalizeMediaPath(raw);
+  // إذا كان مسار نسبي (uploads) نرجعه مباشرة؛ روابط https نرجعها كما هي
+  return p || null;
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const s = getSettings();
   const base = getPublicSiteUrl();
-  const iconUrl = getSiteTabIconUrl();
-
-  let icons: Metadata["icons"] | undefined;
-  if (iconUrl) {
-    const isIco = /\.ico($|\?)/i.test(iconUrl);
-    const isPng = /\.png($|\?)/i.test(iconUrl);
-    const isJpeg = /\.(jpe?g)($|\?)/i.test(iconUrl);
-    const isWebp = /\.webp($|\?)/i.test(iconUrl);
-    const type = isIco
-      ? "image/x-icon"
-      : isPng
-        ? "image/png"
-        : isJpeg
-          ? "image/jpeg"
-          : isWebp
-            ? "image/webp"
-            : undefined;
-    icons = {
-      icon: type ? [{ url: iconUrl, type }] : [{ url: iconUrl }],
-      apple: [{ url: iconUrl }],
-    };
-  }
-
   const defaultTitle = (s.siteDefaultTitle && s.siteDefaultTitle.trim()) || s.siteName;
   let template = (s.siteTitleTemplate && s.siteTitleTemplate.trim()) || `%s | ${s.siteName}`;
-  if (!template.includes("%s")) {
-    template = `%s | ${s.siteName}`;
-  }
+  if (!template.includes("%s")) template = `%s | ${s.siteName}`;
   const keywords = Array.isArray(s.siteSeoKeywords) && s.siteSeoKeywords.length > 0 ? s.siteSeoKeywords : undefined;
 
   return {
     metadataBase: new URL(base),
-    title: {
-      default: defaultTitle,
-      template,
-    },
+    title: { default: defaultTitle, template },
     description: s.siteDescription,
     ...(keywords ? { keywords } : {}),
-    ...(icons ? { icons } : {}),
-    openGraph: {
-      type: "website",
-      locale: "ar_SA",
-      siteName: s.siteName,
-    },
+    openGraph: { type: "website", locale: "ar_SA", siteName: s.siteName },
   };
 }
 
@@ -87,6 +64,7 @@ export default function RootLayout({
   const settings = getSettings();
   const c = settings.colors || DEFAULT_COLORS;
   const scale = Math.max(80, Math.min(150, Number(settings.fontScale) || 100));
+  const iconPath = getIconRelativePath();
 
   const themeCSS = `
     :root, *, *::before, *::after {
@@ -106,12 +84,17 @@ export default function RootLayout({
       dir="rtl"
       className={`${amiri.variable} ${cairo.variable} antialiased`}
     >
-      {/*
-        لا تضع <head> فارغاً/جزئياً هنا: في App Router قد يتعارض مع حقن Metadata (مثل rel="icon")
-        ويمنع ظهور أيقونة التبويب. الأنماط العامة تُوضع في بداية body.
-      */}
-      <body className="min-h-screen flex flex-col">
+      <head>
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+        {iconPath && (
+          <>
+            <link rel="icon" href={iconPath} />
+            <link rel="shortcut icon" href={iconPath} />
+            <link rel="apple-touch-icon" href={iconPath} />
+          </>
+        )}
+      </head>
+      <body className="min-h-screen flex flex-col">
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
