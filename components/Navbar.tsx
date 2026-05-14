@@ -85,7 +85,17 @@ export default function Navbar() {
               : "border border-white/10 bg-white/5 backdrop-blur-md"
           }`}
         >
-          <Link href="/" className="relative z-10">
+          <Link
+            href="/"
+            className="relative z-10 inline-flex shrink-0 cursor-pointer items-center"
+            onClick={(e) => {
+              setIsOpen(false);
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+          >
             <span className={`transition-colors duration-500 ${isOpen || showSolid ? "text-charcoal" : "text-white"}`}>
               {renderLogo("text-xl")}
             </span>

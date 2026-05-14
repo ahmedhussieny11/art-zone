@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import UploadedImage from "@/components/UploadedImage";
 
 interface FooterSettings {
@@ -37,6 +38,7 @@ const FOOTER_SOCIAL_ICONS: Record<string, string> = {
 };
 
 export default function Footer() {
+  const pathname = usePathname();
   const [s, setS] = useState<FooterSettings>(defaults);
 
   useEffect(() => {
@@ -57,17 +59,28 @@ export default function Footer() {
       <div className="mx-auto max-w-5xl px-6 py-20">
         <div className="grid gap-12 text-center md:grid-cols-3 md:text-right">
           <div>
-            {s.logo ? (
-              <UploadedImage src={s.logo} alt={s.siteName} width={150} height={50} className="mx-auto object-contain md:mx-0" />
-            ) : (
-              <span className="font-serif text-3xl font-bold tracking-wider text-white">
-                {nameParts.length > 1 ? (
-                  <>{nameParts[0]}<span className="text-gold">{nameParts[1]}</span></>
-                ) : (
-                  <>{s.siteName}</>
-                )}
-              </span>
-            )}
+            <Link
+              href="/"
+              className="inline-flex cursor-pointer justify-center md:justify-start"
+              onClick={(e) => {
+                if (pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+            >
+              {s.logo ? (
+                <UploadedImage src={s.logo} alt={s.siteName} width={150} height={50} className="mx-auto object-contain md:mx-0" />
+              ) : (
+                <span className="font-serif text-3xl font-bold tracking-wider text-white">
+                  {nameParts.length > 1 ? (
+                    <>{nameParts[0]}<span className="text-gold">{nameParts[1]}</span></>
+                  ) : (
+                    <>{s.siteName}</>
+                  )}
+                </span>
+              )}
+            </Link>
             <p className="mx-auto mt-5 max-w-xs text-base leading-relaxed text-offwhite/50 md:mx-0">
               {s.footerText}
             </p>
