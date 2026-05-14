@@ -19,6 +19,11 @@
     overflow-x: clip;
   }
 
+  /* أثناء قسم الفيديو التفاعلي: تعطيل smooth على الجذر حتى لا يتعارض مع ScrollTrigger ويسبب تقطيع */
+  html.video-scroll-scrub {
+    scroll-behavior: auto !important;
+  }
+
   body {
     background-color: var(--color-offwhite);
     color: var(--color-charcoal);

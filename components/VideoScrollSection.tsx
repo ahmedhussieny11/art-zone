@@ -5,9 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { VideoScrollConfig } from "@/lib/video-scroll-config";
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Register GSAP plugin (browser only)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const HTML_SCRUB_CLASS = "video-scroll-scrub";
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -16,7 +15,6 @@ interface VideoScrollSectionProps {
   config: VideoScrollConfig;
 }
 
-/** إزالة أسهم شائعة من بداية النص لو المستخدم لسه محتفظ بصيغة قديمة */
 function hintPlainText(hint: string): string {
   const t = hint.replace(/^\s*[↓⬇▼]\s*/u, "").trim();
   return t || hint.trim();
@@ -104,24 +102,30 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     };
   }, [videoSrc]);
 
-  /* ── Scroll → video: دمج كل تحديثات GSAP في إطار رسم واحد (rAF)
-     يقلل طلبات seek المتزامنة ويخفّف اللاج على الفيديوهات الثقيلة. ── */
+  /* ── ScrollTrigger يحدّث التقدم مباشرة (بدون tween وسيط) + rAF لدمج seeks
+     في إطار رسم واحد. fastScrollEnd يقلّل التقطيع عند توقف السكروب فجأة.
+     أثناء التفعيل: html.video-scroll-scrub يعطّل scroll-behavior: smooth على
+     الجذر حتى لا يتعارض مع قياس السكروب. ── */
   useEffect(() => {
     if (!isReady) return;
     const section = sectionRef.current;
     const video = videoRef.current;
     if (!section || !video) return;
 
-    const proxy = { t: 0 };
+    const latest = { p: 0 };
     let rafId = 0;
+
+    const setHtmlScrub = (on: boolean) => {
+      document.documentElement.classList.toggle(HTML_SCRUB_CLASS, on);
+    };
 
     const flushSeek = () => {
       rafId = 0;
-      const duration = video.duration;
-      if (!Number.isFinite(duration) || duration <= 0) return;
-      const target = Math.max(0, Math.min(duration, proxy.t * duration));
+      const d = video.duration;
+      if (!Number.isFinite(d) || d <= 0) return;
+      const next = Math.max(0, Math.min(d, latest.p * d));
       try {
-        video.currentTime = target;
+        video.currentTime = next;
       } catch {
         /* Safari */
       }
@@ -132,20 +136,21 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       rafId = requestAnimationFrame(flushSeek);
     };
 
-    const tween = gsap.to(proxy, {
-      t: 1,
-      ease: "none",
-      paused: true,
-      onUpdate: queueSeek,
-    });
-
     const trigger = ScrollTrigger.create({
       trigger: section,
       start: "top top",
       end: "bottom bottom",
       scrub,
+      fastScrollEnd: true,
       invalidateOnRefresh: true,
-      animation: tween,
+      onUpdate: (self) => {
+        latest.p = self.progress;
+        queueSeek();
+      },
+      onEnter: () => setHtmlScrub(true),
+      onLeave: () => setHtmlScrub(false),
+      onEnterBack: () => setHtmlScrub(true),
+      onLeaveBack: () => setHtmlScrub(false),
     });
 
     const refresh = () => ScrollTrigger.refresh();
@@ -155,7 +160,7 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       window.removeEventListener("resize", refresh);
       if (rafId) cancelAnimationFrame(rafId);
       trigger.kill();
-      tween.kill();
+      setHtmlScrub(false);
     };
   }, [isReady, scrub, scrollMultiplier]);
 
@@ -312,7 +317,6 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           </div>
         )}
 
-        {/* تلميح التمرير — أسفل الشاشة، نص بسيط بدون أيقونة (زي النسخة الأولى) */}
         {hintText && (
           <p
             className="pointer-events-none absolute bottom-7 left-1/2 z-10 max-w-[92vw] -translate-x-1/2 text-center text-[10px] font-medium tracking-[0.32em] text-white/50 sm:bottom-10 sm:text-[11px]"
