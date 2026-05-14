@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 
 interface FooterSettings {
   logo: string | null;
@@ -58,7 +58,7 @@ export default function Footer() {
         <div className="grid gap-12 text-center md:grid-cols-3 md:text-right">
           <div>
             {s.logo ? (
-              <Image src={s.logo} alt={s.siteName} width={150} height={50} className="mx-auto object-contain md:mx-0" />
+              <UploadedImage src={s.logo} alt={s.siteName} width={150} height={50} className="mx-auto object-contain md:mx-0" />
             ) : (
               <span className="font-serif text-3xl font-bold tracking-wider text-white">
                 {nameParts.length > 1 ? (

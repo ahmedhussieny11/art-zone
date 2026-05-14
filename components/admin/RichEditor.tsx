@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 
 interface RichEditorProps {
   value: string;
@@ -244,7 +244,7 @@ export default function RichEditor({ value, onChange }: RichEditorProps) {
               </div>
             ) : (
               <div className="relative mb-4">
-                <Image src={imageUrl} alt="معاينة" width={400} height={250} className="w-full rounded-lg object-cover" />
+                <UploadedImage src={imageUrl} alt="معاينة" width={400} height={250} className="w-full rounded-lg object-cover" />
                 <button
                   type="button"
                   onClick={() => setImageUrl("")}

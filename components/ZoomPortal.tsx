@@ -9,7 +9,7 @@ import {
   useMotionValueEvent,
   MotionValue,
 } from "framer-motion";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import Link from "next/link";
 import type { ZoomPortalConfig, ZoomPortalLayer, ZoomPortalHotspot } from "@/lib/zoom-portal-data";
 
@@ -112,7 +112,7 @@ function LayerView({
       className="absolute inset-0 will-change-transform"
     >
       {layer.src && (
-        <Image src={layer.src} alt={layer.label} fill priority={isFirst} sizes="100vw" className="object-cover" />
+        <UploadedImage src={layer.src} alt={layer.label} fill priority={isFirst} sizes="100vw" className="object-cover" />
       )}
       <div className="absolute inset-0" style={{ background: imgVigBg }} />
     </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 
 interface ImageUploaderProps {
   label: string;
@@ -33,7 +33,7 @@ export function SingleImageUploader({ label, value, onChange }: ImageUploaderPro
       <label className="mb-2 block text-xs font-medium text-charcoal">{label}</label>
       {value ? (
         <div className="group relative inline-block">
-          <Image src={value} alt={label} width={200} height={150} className="rounded-lg border border-gray-200 object-cover" style={{ width: 200, height: 150 }} />
+          <UploadedImage src={value} alt={label} width={200} height={150} className="rounded-lg border border-gray-200 object-cover" style={{ width: 200, height: 150 }} />
           <button
             type="button"
             onClick={() => onChange(null)}
@@ -103,7 +103,7 @@ export function GalleryUploader({ label, value, onChange }: GalleryUploaderProps
       <div className="flex flex-wrap gap-3">
         {value.map((url, i) => (
           <div key={i} className="group relative">
-            <Image src={url} alt={`صورة ${i + 1}`} width={150} height={120} className="rounded-lg border border-gray-200 object-cover" style={{ width: 150, height: 120 }} />
+            <UploadedImage src={url} alt={`صورة ${i + 1}`} width={150} height={120} className="rounded-lg border border-gray-200 object-cover" style={{ width: 150, height: 120 }} />
             <button
               type="button"
               onClick={() => removeImage(i)}

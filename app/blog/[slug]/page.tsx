@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import FadeIn from "@/components/ui/FadeIn";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import { getPublishedArticles, getArticleBySlug } from "@/lib/data";
+import { absoluteMediaUrl } from "@/lib/media-url";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -35,15 +36,19 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       modifiedTime: article.updatedAt,
       authors: [article.author],
       tags: article.tags,
-      images: article.ogImage || article.coverImage
-        ? [{ url: `${siteUrl}${article.ogImage || article.coverImage}`, width: 1200, height: 630, alt: article.title }]
-        : [],
+      images: (() => {
+        const u = absoluteMediaUrl(siteUrl, article.ogImage || article.coverImage);
+        return u ? [{ url: u, width: 1200, height: 630, alt: article.title }] : [];
+      })(),
     },
     twitter: {
       card: "summary_large_image",
       title: article.seoTitle || article.title,
       description: article.seoDescription || article.excerpt,
-      images: article.ogImage || article.coverImage ? [`${siteUrl}${article.ogImage || article.coverImage}`] : [],
+      images: (() => {
+        const u = absoluteMediaUrl(siteUrl, article.ogImage || article.coverImage);
+        return u ? [u] : [];
+      })(),
     },
     alternates: {
       canonical: `${siteUrl}/blog/${article.slug}`,
@@ -67,7 +72,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     "@type": "Article",
     headline: article.title,
     description: article.seoDescription || article.excerpt,
-    image: article.coverImage ? `${siteUrl}${article.coverImage}` : undefined,
+    image: absoluteMediaUrl(siteUrl, article.coverImage),
     author: { "@type": "Organization", name: article.author },
     publisher: {
       "@type": "Organization",
@@ -146,7 +151,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="mx-auto max-w-5xl px-6 lg:px-12">
             <FadeIn>
               <div className="relative -mt-8 aspect-[16/9] overflow-hidden rounded-xl shadow-2xl">
-                <Image src={article.coverImage} alt={article.title} fill className="object-contain bg-charcoal/5" sizes="100vw" priority />
+                <UploadedImage src={article.coverImage} alt={article.title} fill className="object-contain bg-charcoal/5" sizes="100vw" priority />
               </div>
             </FadeIn>
           </div>
@@ -216,7 +221,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   <Link href={`/blog/${a.slug}`} className="group block">
                     <div className="relative aspect-[16/10] overflow-hidden rounded-lg">
                       {a.coverImage ? (
-                        <Image src={a.coverImage} alt={a.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="33vw" />
+                        <UploadedImage src={a.coverImage} alt={a.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="33vw" />
                       ) : (
                         <PlaceholderImage className="h-full w-full" />
                       )}

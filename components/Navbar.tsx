@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -57,7 +57,7 @@ export default function Navbar() {
   const nameParts = settings.siteName.split(/(?<=ART)/i);
   const renderLogo = (sizeClass: string) => {
     if (settings.logo) {
-      return <Image src={settings.logo} alt={settings.siteName} width={120} height={40} className={`object-contain ${sizeClass}`} />;
+      return <UploadedImage src={settings.logo} alt={settings.siteName} width={120} height={40} className={`object-contain ${sizeClass}`} />;
     }
     return (
       <span className={`font-serif font-bold tracking-wider ${sizeClass}`}>

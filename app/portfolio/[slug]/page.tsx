@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import FadeIn from "@/components/ui/FadeIn";
@@ -54,7 +54,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <FadeIn>
             <div className="relative -mt-8 aspect-[21/9] overflow-hidden shadow-2xl">
               {project.coverImage ? (
-                <Image src={project.coverImage} alt={project.title} fill className="object-cover" sizes="100vw" priority />
+                <UploadedImage src={project.coverImage} alt={project.title} fill className="object-cover" sizes="100vw" priority />
               ) : (
                 <PlaceholderImage className="h-full w-full" label={project.title} />
               )}
@@ -93,7 +93,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               project.gallery.map((img, i) => (
                 <FadeIn key={i} delay={i * 0.05}>
                   <div className="aspect-[4/3] overflow-hidden">
-                    <Image src={img} alt={`${project.title} - صورة ${i + 1}`} width={600} height={450} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                    <UploadedImage src={img} alt={`${project.title} - صورة ${i + 1}`} width={600} height={450} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
                   </div>
                 </FadeIn>
               ))

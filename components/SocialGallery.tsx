@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import FadeIn from "./ui/FadeIn";
 
 interface Props {
@@ -45,7 +45,7 @@ export default function SocialGallery({ images, clickAction, customLink }: Props
               onClick={() => handleClick(i)}
               className="group relative block aspect-square w-full overflow-hidden cursor-pointer"
             >
-              <Image
+              <UploadedImage
                 src={src}
                 alt={`معرض ${i + 1}`}
                 fill
@@ -108,7 +108,7 @@ export default function SocialGallery({ images, clickAction, customLink }: Props
           )}
 
           <div className="relative max-h-[85vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
-            <Image
+            <UploadedImage
               src={images[lightboxIndex]}
               alt={`معرض ${lightboxIndex + 1}`}
               width={1200}

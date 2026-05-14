@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import FadeIn from "@/components/ui/FadeIn";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
@@ -81,7 +81,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
                   <Link href={`/blog/${article.slug}`} className="group block overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-lg">
                     <div className="relative aspect-[16/10] overflow-hidden">
                       {article.coverImage ? (
-                        <Image
+                        <UploadedImage
                           src={article.coverImage}
                           alt={article.title}
                           fill

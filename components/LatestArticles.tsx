@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import FadeIn from "@/components/ui/FadeIn";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
@@ -60,7 +60,7 @@ export default function LatestArticles({
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   {article.coverImage ? (
-                    <Image
+                    <UploadedImage
                       src={article.coverImage}
                       alt={article.title}
                       fill

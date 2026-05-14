@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import PlaceholderImage from "./ui/PlaceholderImage";
 import FadeIn from "./ui/FadeIn";
 
@@ -30,7 +30,7 @@ export default function ProjectCard({
       <Link href={`/portfolio/${slug}`} className="group block overflow-hidden">
         <div className="relative aspect-[3/4] overflow-hidden">
           {coverImage ? (
-            <Image
+            <UploadedImage
               src={coverImage}
               alt={title}
               fill

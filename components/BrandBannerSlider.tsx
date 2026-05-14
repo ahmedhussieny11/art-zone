@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import UploadedImage from "@/components/UploadedImage";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import {
@@ -320,7 +320,7 @@ function SlidePanel({
             className="relative h-full w-full bg-[#141312]"
             style={{ transformStyle: "preserve-3d" }}
           >
-            <Image
+            <UploadedImage
               src={slide.src}
               alt={slide.title}
               fill
