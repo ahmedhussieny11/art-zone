@@ -11,7 +11,8 @@ import CTABanner from "@/components/CTABanner";
 import LatestArticles from "@/components/LatestArticles";
 import { getProjects, getTestimonials, getSettings, getHomePageArticles, getBrandSliderConfig } from "@/lib/data";
 import { getZoomPortalConfig } from "@/lib/zoom-portal-data";
-import { getVideoScrollConfig, type VideoScrollPosition } from "@/lib/video-scroll-data";
+import { getVideoScrollConfig } from "@/lib/video-scroll-data";
+import type { VideoScrollPosition } from "@/lib/video-scroll-config";
 
 export default function HomePage() {
   const settings = getSettings();

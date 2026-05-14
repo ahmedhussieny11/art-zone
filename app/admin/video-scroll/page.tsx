@@ -6,7 +6,7 @@ import {
   DEFAULT_VIDEO_SCROLL_CONFIG,
   type VideoScrollConfig,
   type VideoScrollPosition,
-} from "@/lib/video-scroll-data";
+} from "@/lib/video-scroll-config";
 import { VideoUploader } from "@/components/admin/ImageUploader";
 
 export default function VideoScrollAdminPage() {
