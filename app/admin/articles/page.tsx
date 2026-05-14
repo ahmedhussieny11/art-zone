@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Article } from "@/lib/data";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -24,7 +25,7 @@ export default function AdminArticlesPage() {
           <h1 className="text-2xl font-bold text-charcoal">المقالات</h1>
           <p className="mt-1 text-sm text-warmgray">إدارة مقالات المدونة</p>
         </div>
-        <Link href="/admin/articles/new" className="rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white hover:bg-gold-dark">
+        <Link href={`${ADMIN_UI_BASE}/articles/new`} className="rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white hover:bg-gold-dark">
           + مقال جديد
         </Link>
       </div>
@@ -66,7 +67,7 @@ export default function AdminArticlesPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     </Link>
-                    <Link href={`/admin/articles/${article._id}`} className="text-xs text-gold hover:text-gold-dark">تعديل</Link>
+                    <Link href={`${ADMIN_UI_BASE}/articles/${article._id}`} className="text-xs text-gold hover:text-gold-dark">تعديل</Link>
                     <button onClick={() => handleDelete(article._id)} className="text-xs text-red-500 hover:text-red-700">حذف</button>
                   </div>
                 </td>

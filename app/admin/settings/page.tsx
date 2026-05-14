@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/data";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 import { SingleImageUploader } from "@/components/admin/ImageUploader";
 
 export default function SettingsPage() {
@@ -10,6 +11,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [logo, setLogo] = useState<string | null>(null);
+  const [siteFavicon, setSiteFavicon] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -17,6 +19,7 @@ export default function SettingsPage() {
       .then((s: SiteSettings) => {
         setSettings(s);
         setLogo(s.logo || null);
+        setSiteFavicon(s.siteFavicon || null);
       });
   }, []);
 
@@ -24,11 +27,18 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     const fd = new FormData(e.currentTarget);
+    const kwRaw = String(fd.get("siteSeoKeywords") ?? "");
+    const siteSeoKeywords = kwRaw.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
     const data = {
       ...settings,
       logo,
+      siteFavicon,
       siteName: fd.get("siteName"),
       siteDescription: fd.get("siteDescription"),
+      publicSiteUrl: String(fd.get("publicSiteUrl") ?? "").trim().replace(/\/$/, "") || settings?.publicSiteUrl,
+      siteDefaultTitle: fd.get("siteDefaultTitle"),
+      siteTitleTemplate: fd.get("siteTitleTemplate"),
+      siteSeoKeywords,
       headerCtaText: fd.get("headerCtaText"),
       headerCtaLink: fd.get("headerCtaLink"),
       footerText: fd.get("footerText"),
@@ -52,7 +62,7 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold text-charcoal">الإعدادات</h1>
       <p className="mt-1 text-sm text-warmgray">إعدادات الموقع العامة</p>
       <p className="mt-3 text-sm">
-        <Link href="/admin/contact" className="font-medium text-gold hover:underline">
+        <Link href={`${ADMIN_UI_BASE}/contact`} className="font-medium text-gold hover:underline">
           صفحة اتصل بنا
         </Link>
         <span className="text-warmgray"> — تعديل النموذج، العناوين، الواتساب، الخريطة، والبيانات من صفحة مخصصة.</span>
@@ -64,10 +74,39 @@ export default function SettingsPage() {
         <Section icon={<IconPaint />} title="الهوية والشعار" color="bg-gold/10 text-gold">
           <SingleImageUploader label="شعار الموقع (Logo)" value={logo} onChange={setLogo} />
           <p className="text-xs text-warmgray">لو مفيش شعار، هيظهر اسم الموقع كنص بدلاً منه</p>
-          <Field label="اسم الموقع" name="siteName" defaultValue={settings.siteName} />
+          <Field label="اسم الموقع (يظهر في الهيدر والميتا)" name="siteName" defaultValue={settings.siteName} />
           <div>
-            <label className="mb-2 block text-xs font-medium text-charcoal">وصف الموقع</label>
+            <label className="mb-2 block text-xs font-medium text-charcoal">وصف الموقع (نص تعريفي — يُستخدم في الميتا والفوتر)</label>
             <textarea name="siteDescription" rows={3} defaultValue={settings.siteDescription} className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-gold" />
+          </div>
+        </Section>
+
+        <Section icon={<IconGlobe />} title="تبويب المتصفح ومحركات البحث (SEO)" color="bg-slate-50 text-slate-700">
+          <SingleImageUploader label="أيقونة التبويب (Favicon)" value={siteFavicon} onChange={setSiteFavicon} />
+          <p className="text-xs text-warmgray">يفضّل صورة مربعة PNG أو ICO (مثلاً 32×32 أو 192×192). لو فاضية يُستخدم favicon الافتراضي للمشروع.</p>
+          <Field
+            label="الرابط العام للموقع (https)"
+            name="publicSiteUrl"
+            defaultValue={settings.publicSiteUrl}
+            dir="ltr"
+            hint="بدون شرطة في النهاية. يُستخدم للكانونيكال، خريطة الموقع، ومشاركة الروابط (مثال: https://example.com)"
+          />
+          <Field label="عنوان الصفحة الرئيسية في التبويب" name="siteDefaultTitle" defaultValue={settings.siteDefaultTitle} hint="يظهر عند فتح الرئيسية" />
+          <Field
+            label="قالب عناوين باقي الصفحات"
+            name="siteTitleTemplate"
+            defaultValue={settings.siteTitleTemplate}
+            hint="يجب أن يحتوي على %s — يُستبدل بعنوان الصفحة. مثال: %s | آرت زون"
+          />
+          <div>
+            <label className="mb-2 block text-xs font-medium text-charcoal">كلمات مفتاحية (SEO) — سطر لكل كلمة أو عبارة</label>
+            <textarea
+              name="siteSeoKeywords"
+              rows={5}
+              defaultValue={settings.siteSeoKeywords.join("\n")}
+              dir="rtl"
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-gold"
+            />
           </div>
         </Section>
 
@@ -95,7 +134,7 @@ export default function SettingsPage() {
 
         <p className="text-sm text-warmgray">
           إعدادات بوابة التصميم (Zoom Portal) متاحة من{" "}
-          <Link href="/admin/zoom-portal" className="font-medium text-gold hover:underline">
+          <Link href={`${ADMIN_UI_BASE}/zoom-portal`} className="font-medium text-gold hover:underline">
             صفحة بوابة التصميم
           </Link>
           .
@@ -140,3 +179,4 @@ function IconPaint() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 
 function IconMenu() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>; }
 function IconBuilding() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>; }
 function IconSocial() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-4.5 3.75h9M3.75 4.5h16.5v15H3.75V4.5z" /></svg>; }
+function IconGlobe() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M12 3a15.9 15.9 0 018 9 15.9 15.9 0 01-8 9 15.9 15.9 0 01-8-9 15.9 15.9 0 018-9z" /></svg>; }

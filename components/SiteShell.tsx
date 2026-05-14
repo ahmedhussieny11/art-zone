@@ -8,7 +8,7 @@ import FontScaler from "@/components/FontScaler";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/artcontrol");
 
   if (isAdmin) return <>{children}</>;
 

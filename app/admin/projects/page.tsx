@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Project } from "@/lib/data";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 const categoryLabels: Record<string, string> = { residential: "سكني", commercial: "تجاري", classic: "كلاسيكي", modern: "عصري" };
 
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
           <h1 className="text-2xl font-bold text-charcoal">المشاريع</h1>
           <p className="mt-1 text-sm text-warmgray">إدارة مشاريع المعرض</p>
         </div>
-        <Link href="/admin/projects/new" className="rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gold-dark">
+        <Link href={`${ADMIN_UI_BASE}/projects/new`} className="rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gold-dark">
           + مشروع جديد
         </Link>
       </div>
@@ -64,7 +65,7 @@ export default function ProjectsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <Link href={`/admin/projects/${project._id}`} className="text-xs text-gold hover:text-gold-dark">
+                      <Link href={`${ADMIN_UI_BASE}/projects/${project._id}`} className="text-xs text-gold hover:text-gold-dark">
                         تعديل
                       </Link>
                       <button onClick={() => handleDelete(project._id)} className="text-xs text-red-500 hover:text-red-700">

@@ -74,6 +74,16 @@ export interface SiteSettings {
   logo: string | null;
   siteName: string;
   siteDescription: string;
+  /** الرابط العام للموقع (https، بدون / في النهاية) — للكانونيكال والـ sitemap والميتا */
+  publicSiteUrl: string;
+  /** أيقونة تبويب المتصفح (favicon) — رفع صورة مربعة تقريباً 32×32 أو أكبر PNG/ICO */
+  siteFavicon: string | null;
+  /** عنوان التبويب للصفحة الرئيسية */
+  siteDefaultTitle: string;
+  /** قالب عناوين باقي الصفحات — يجب أن يحتوي على %s مكان عنوان الصفحة */
+  siteTitleTemplate: string;
+  /** كلمات مفتاحية عامة (meta keywords) */
+  siteSeoKeywords: string[];
   headerCtaText: string;
   headerCtaLink: string;
   footerText: string;
@@ -325,6 +335,18 @@ const DEFAULT_SETTINGS: SiteSettings = {
   logo: null,
   siteName: "ARTZONE",
   siteDescription: "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
+  publicSiteUrl: "https://artzonedesign.com",
+  siteFavicon: null,
+  siteDefaultTitle: "آرت زون للتصميم | تصميم داخلي فاخر",
+  siteTitleTemplate: "%s | آرت زون للتصميم",
+  siteSeoKeywords: [
+    "تصميم داخلي",
+    "تصميم فاخر",
+    "تصميم سكني",
+    "تصميم تجاري",
+    "تشطيبات",
+    "آرت زون للتصميم",
+  ],
   headerCtaText: "احصل على عرض سعر",
   headerCtaLink: "/contact",
   footerText: "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
@@ -694,7 +716,7 @@ export function deleteArticle(id: string): void {
 }
 
 // Settings
-const OPTIONAL_EMPTY_FIELDS = new Set(["googleMapsUrl", "socialLinks", "socialLinksShow", "socialSectionImages", "socialSectionCustomLink", "processSteps", "colors", "servicesColors", "projectCategories", "articleCategories", "zoomPortalLayer1Src", "zoomPortalLayer2Src", "zoomPortalLayer3Src"]);
+const OPTIONAL_EMPTY_FIELDS = new Set(["googleMapsUrl", "socialLinks", "socialLinksShow", "socialSectionImages", "socialSectionCustomLink", "processSteps", "colors", "servicesColors", "projectCategories", "articleCategories", "zoomPortalLayer1Src", "zoomPortalLayer2Src", "zoomPortalLayer3Src", "siteFavicon"]);
 
 export function getSettings(): SiteSettings {
   const stored = readJson("settings.json", DEFAULT_SETTINGS);
@@ -713,10 +735,25 @@ export function getSettings(): SiteSettings {
   if (!Array.isArray(merged.contactBudgetRanges) || merged.contactBudgetRanges.length === 0) {
     merged.contactBudgetRanges = [...DEFAULT_SETTINGS.contactBudgetRanges];
   }
+  if (!Array.isArray(merged.siteSeoKeywords) || merged.siteSeoKeywords.length === 0) {
+    merged.siteSeoKeywords = [...DEFAULT_SETTINGS.siteSeoKeywords];
+  }
+  const tpl = String(merged.siteTitleTemplate || "");
+  if (!tpl.includes("%s")) {
+    merged.siteTitleTemplate = DEFAULT_SETTINGS.siteTitleTemplate;
+  }
+  if (merged.siteFavicon === "") merged.siteFavicon = null;
   return merged;
 }
 export function saveSettings(settings: SiteSettings): void {
   writeJson("settings.json", settings);
+}
+
+/** الرابط العام للموقع (للميتا، sitemap، مقالات OG) */
+export function getPublicSiteUrl(): string {
+  const s = getSettings();
+  const u = (s.publicSiteUrl || DEFAULT_SETTINGS.publicSiteUrl).trim().replace(/\/$/, "");
+  return u || DEFAULT_SETTINGS.publicSiteUrl;
 }
 
 export interface AdminUserRecord {

@@ -5,6 +5,8 @@ import PortfolioFilter from "@/components/PortfolioFilter";
 import ProjectCard from "@/components/ProjectCard";
 import { getProjects } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "أعمالنا",
   description: "استكشف معرض أعمالنا في التصميم الداخلي الفاخر الذي يشمل الأنماط السكنية والتجارية والكلاسيكية والعصرية.",

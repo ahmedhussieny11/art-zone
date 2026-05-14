@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
-import { getSettings } from "@/lib/data";
+import { getSettings, getPublicSiteUrl } from "@/lib/data";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -19,22 +19,36 @@ const cairo = Cairo({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "آرت زون للتصميم | تصميم داخلي فاخر",
-    template: "%s | آرت زون للتصميم",
-  },
-  description:
-    "استوديو تصميم داخلي فاخر متخصص في المساحات السكنية والتجارية. نبتكر بيئات مميزة تجمع بين الأناقة والوظيفية والجماليات الخالدة.",
-  keywords: [
-    "تصميم داخلي",
-    "تصميم فاخر",
-    "تصميم سكني",
-    "تصميم تجاري",
-    "تشطيبات",
-    "آرت زون للتصميم",
-  ],
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const s = getSettings();
+  const base = getPublicSiteUrl();
+  const iconHref = (s.siteFavicon && s.siteFavicon.trim()) || "/favicon.ico";
+  const defaultTitle = (s.siteDefaultTitle && s.siteDefaultTitle.trim()) || s.siteName;
+  let template = (s.siteTitleTemplate && s.siteTitleTemplate.trim()) || `%s | ${s.siteName}`;
+  if (!template.includes("%s")) {
+    template = `%s | ${s.siteName}`;
+  }
+  const keywords = Array.isArray(s.siteSeoKeywords) && s.siteSeoKeywords.length > 0 ? s.siteSeoKeywords : undefined;
+
+  return {
+    metadataBase: new URL(base),
+    title: {
+      default: defaultTitle,
+      template,
+    },
+    description: s.siteDescription,
+    ...(keywords ? { keywords } : {}),
+    icons: {
+      icon: [{ url: iconHref }],
+      apple: [{ url: iconHref }],
+    },
+    openGraph: {
+      type: "website",
+      locale: "ar_SA",
+      siteName: s.siteName,
+    },
+  };
+}
 
 const DEFAULT_COLORS = {
   offwhite: "#F5F0EB",

@@ -8,6 +8,7 @@ import { SingleImageUploader } from "@/components/admin/ImageUploader";
 import RichEditor from "@/components/admin/RichEditor";
 import CategorySelect from "@/components/admin/CategorySelect";
 import TagInput from "@/components/admin/TagInput";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -63,7 +64,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    router.push("/admin/articles");
+    router.push(`${ADMIN_UI_BASE}/articles`);
   }
 
   if (!article) return <div className="text-warmgray">جاري التحميل...</div>;

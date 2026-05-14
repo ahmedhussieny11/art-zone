@@ -6,6 +6,7 @@ import { SingleImageUploader } from "@/components/admin/ImageUploader";
 import RichEditor from "@/components/admin/RichEditor";
 import CategorySelect from "@/components/admin/CategorySelect";
 import TagInput from "@/components/admin/TagInput";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 import { generateSlug } from "@/lib/slug";
 
 export default function NewArticlePage() {
@@ -58,7 +59,7 @@ export default function NewArticlePage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    router.push("/admin/articles");
+    router.push(`${ADMIN_UI_BASE}/articles`);
   }
 
   return (

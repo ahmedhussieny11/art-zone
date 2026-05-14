@@ -1,34 +1,37 @@
 import type { Metadata } from "next";
-
-const siteConfig = {
-  name: "آرت زون للتصميم",
-  description:
-    "استوديو تصميم داخلي فاخر متخصص في المساحات السكنية والتجارية. نبتكر بيئات مميزة تجمع بين الأناقة والوظيفية والجماليات الخالدة.",
-  url: "https://artzonedesign.com",
-};
+import { getSettings, getPublicSiteUrl } from "@/lib/data";
 
 export function createMetadata(overrides: Partial<Metadata> = {}): Metadata {
-  const title = overrides.title
-    ? `${overrides.title} | ${siteConfig.name}`
-    : siteConfig.name;
-  const description =
-    (overrides.description as string) || siteConfig.description;
+  const s = getSettings();
+  const base = getPublicSiteUrl();
+  const name = s.siteName;
+  const tpl = s.siteTitleTemplate?.includes("%s") ? s.siteTitleTemplate : `%s | ${name}`;
+
+  const rawTitle = overrides.title;
+  const title =
+    typeof rawTitle === "string"
+      ? tpl.replace("%s", rawTitle)
+      : (rawTitle ?? (s.siteDefaultTitle || name));
+  const description = (overrides.description as string) || s.siteDescription;
+  const keywords =
+    Array.isArray(s.siteSeoKeywords) && s.siteSeoKeywords.length > 0 ? s.siteSeoKeywords : undefined;
 
   return {
     title,
     description,
-    metadataBase: new URL(siteConfig.url),
+    ...(keywords ? { keywords } : {}),
+    metadataBase: new URL(base),
     openGraph: {
-      title: title as string,
+      title: typeof title === "string" ? title : name,
       description,
-      siteName: siteConfig.name,
+      siteName: name,
       type: "website",
       locale: "ar_SA",
       ...(overrides.openGraph || {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: title as string,
+      title: typeof title === "string" ? title : name,
       description,
       ...(overrides.twitter || {}),
     },
@@ -36,4 +39,11 @@ export function createMetadata(overrides: Partial<Metadata> = {}): Metadata {
   };
 }
 
-export { siteConfig };
+export function getSiteConfigForMetadata() {
+  const s = getSettings();
+  return {
+    name: s.siteName,
+    description: s.siteDescription,
+    url: getPublicSiteUrl(),
+  };
+}

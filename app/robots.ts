@@ -1,14 +1,18 @@
 import type { MetadataRoute } from "next";
+import { getPublicSiteUrl } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
 
 export default function robots(): MetadataRoute.Robots {
+  const base = getPublicSiteUrl();
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/admin/"],
+        disallow: ["/admin/", "/artcontrol/", "/api/admin/"],
       },
     ],
-    sitemap: "https://artzonedesign.com/sitemap.xml",
+    sitemap: `${base}/sitemap.xml`,
   };
 }

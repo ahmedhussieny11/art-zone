@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "scrollHeight": "500vh",
   "bgColor": "#2C2C2C",
   "vignetteOpacity": 0.72,

@@ -1,18 +1,33 @@
 {
   "logo": "/uploads/1778576435589-rtrzeo.png",
-  "siteName": "ARTZONE",
+  "siteName": "ART ZONE",
   "siteDescription": "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
+  "publicSiteUrl": "https://artzonedesign.com",
+  "siteFavicon": "/uploads/1778751077768-rgxkfn.png",
+  "siteDefaultTitle": "آرت زون للتصميم | تصميم داخلي فاخر",
+  "siteTitleTemplate": "%s | آرت زون للتصميم",
+  "siteSeoKeywords": [
+    "شركة ديكور",
+    "مهندس ديكور",
+    "شركة تشطيبات",
+    "تصميم داخلي",
+    "تصميم فاخر",
+    "تصميم سكني",
+    "تصميم تجاري",
+    "تشطيبات",
+    "آرت زون للتصميم"
+  ],
   "headerCtaText": "احصل على عرض سعر",
   "headerCtaLink": "/contact",
   "footerText": "نصنع تصاميم داخلية فاخرة تُلهم. من الفكرة إلى التنفيذ، نحوّل المساحات إلى أعمال فنية خالدة.",
   "copyrightText": "آرت زون للتصميم. جميع الحقوق محفوظة.",
-  "whatsappNumber": "+20155555555",
+  "whatsappNumber": "+20 15 55304661",
   "whatsappMessage": "مرحباً، أود الاستفسار عن خدمات التصميم الداخلي",
   "whatsappEnabled": true,
   "email": "info@artzonedesign.com",
   "address": "مدينتي, القاهرة",
   "addressNote": "بموعد مسبق فقط",
-  "instagramHandle": "@artzonedesign",
+  "instagramHandle": "@artzone.dsgn",
   "workingHours": "الأحد - الخميس: 9:00 صباحاً - 6:00 مساءً",
   "closedDays": "الجمعة - السبت: مغلق",
   "googleMapsUrl": null,
@@ -21,6 +36,27 @@
   "contactPageSubtitle": "يسعدنا سماع تفاصيل مشروعك. تواصل معنا ولنبتكر شيئاً استثنائياً معاً.",
   "contactFormTitle": "طلب استشارة",
   "contactFormSubtitle": "املأ النموذج أدناه وسيتواصل فريقنا معك خلال 24 ساعة.",
+  "contactPhonePlaceholder": "+20 15 55304661",
+  "contactServiceOptions": [
+    "تصميم داخلي",
+    "تشطيبات",
+    "إشراف",
+    "استشارة",
+    "أخرى"
+  ],
+  "contactBudgetRanges": [
+    "أقل من 200,000 جنيه",
+    "200,000 - 500,000 جنيه",
+    "500,000 - 1,500,000 جنيه",
+    "أكثر من 1,500,000 جنيه",
+    "غير محدد بعد"
+  ],
+  "contactWhatsappTitle": "واتساب",
+  "contactWhatsappCta": "تواصل معنا الآن",
+  "contactWhatsappHint": "رد سريع خلال ساعات العمل",
+  "contactEmailTitle": "البريد الإلكتروني",
+  "contactStudioTitle": "زوروا الاستوديو",
+  "contactHoursTitle": "ساعات العمل",
   "fontScale": 100,
   "heroLabel": "استوديو تصميم داخلي فاخر",
   "heroTitle": "نصنع مساحات تُلهم الإبداع",
@@ -45,7 +81,7 @@
   "sectionBodySize": "base",
   "socialSectionEnabled": true,
   "socialSectionLabel": "تابعنا",
-  "socialSectionTitle": "aaaaaaaaa",
+  "socialSectionTitle": "@artzone.dsgn",
   "socialSectionDescription": "تابع رحلتنا على السوشيال ميديا لمشاهدة أحدث المشاريع والكواليس.",
   "socialSectionImages": [
     "/uploads/1778596329433-9orayk.jpeg",
@@ -63,7 +99,7 @@
   "socialSectionClickAction": "lightbox",
   "socialSectionCustomLink": "",
   "socialLinks": {
-    "instagram": "",
+    "instagram": "https://www.instagram.com/artzone.dsgn/",
     "facebook": "https://www.facebook.com/ArtZoneDesignforLuxuryInteriors",
     "twitter": "",
     "tiktok": "",
@@ -240,11 +276,11 @@
   "homeBlogLabel": "المدونة",
   "homeBlogTitle": "أحدث المقالات",
   "homeBlogDescription": "نصائح واتجاهات في التصميم الداخلي من فريق آرت زون.",
+  "homeBlogLimit": 3,
+  "homeBlogCtaText": "عرض جميع المقالات",
   "homeBlogArticleIds": [
     "a1",
     "a2",
     "mp2w5gn6afyjtb"
-  ],
-  "homeBlogLimit": 3,
-  "homeBlogCtaText": "عرض جميع المقالات"
+  ]
 }

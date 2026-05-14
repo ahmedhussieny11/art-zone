@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Project } from "@/lib/data";
 import { SingleImageUploader, GalleryUploader } from "@/components/admin/ImageUploader";
 import CategorySelect from "@/components/admin/CategorySelect";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -49,7 +50,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    router.push("/admin/projects");
+    router.push(`${ADMIN_UI_BASE}/projects`);
   }
 
   if (!project) return <div className="text-warmgray">جاري التحميل...</div>;

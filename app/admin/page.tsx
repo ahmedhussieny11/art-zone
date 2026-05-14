@@ -1,5 +1,6 @@
 import { getProjects, getMessages, getTestimonials, getServices, getArticles } from "@/lib/data";
 import Link from "next/link";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 export default function AdminDashboard() {
   const projects = getProjects();
@@ -10,11 +11,11 @@ export default function AdminDashboard() {
   const unreadMessages = messages.filter((m) => !m.read).length;
 
   const stats = [
-    { label: "المشاريع", value: projects.length, href: "/admin/projects", color: "bg-gold/10 text-gold" },
-    { label: "المقالات", value: articles.length, href: "/admin/articles", color: "bg-orange-50 text-orange-600" },
-    { label: "الخدمات", value: services.length, href: "/admin/services", color: "bg-blue-50 text-blue-600" },
-    { label: "آراء العملاء", value: testimonials.length, href: "/admin/testimonials", color: "bg-green-50 text-green-600" },
-    { label: "الرسائل", value: messages.length, href: "/admin/messages", color: "bg-purple-50 text-purple-600", badge: unreadMessages },
+    { label: "المشاريع", value: projects.length, href: `${ADMIN_UI_BASE}/projects`, color: "bg-gold/10 text-gold" },
+    { label: "المقالات", value: articles.length, href: `${ADMIN_UI_BASE}/articles`, color: "bg-orange-50 text-orange-600" },
+    { label: "الخدمات", value: services.length, href: `${ADMIN_UI_BASE}/services`, color: "bg-blue-50 text-blue-600" },
+    { label: "آراء العملاء", value: testimonials.length, href: `${ADMIN_UI_BASE}/testimonials`, color: "bg-green-50 text-green-600" },
+    { label: "الرسائل", value: messages.length, href: `${ADMIN_UI_BASE}/messages`, color: "bg-purple-50 text-purple-600", badge: unreadMessages },
   ];
 
   const recentMessages = messages.slice(0, 5);
@@ -51,7 +52,7 @@ export default function AdminDashboard() {
       <div className="mt-10">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-charcoal">آخر الرسائل</h2>
-          <Link href="/admin/messages" className="text-sm text-gold hover:text-gold-dark">
+          <Link href={`${ADMIN_UI_BASE}/messages`} className="text-sm text-gold hover:text-gold-dark">
             عرض الكل
           </Link>
         </div>

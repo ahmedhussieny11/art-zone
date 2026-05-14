@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SingleImageUploader, GalleryUploader } from "@/components/admin/ImageUploader";
 import CategorySelect from "@/components/admin/CategorySelect";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 import { generateSlug } from "@/lib/slug";
 
 export default function NewProjectPage() {
@@ -48,7 +49,7 @@ export default function NewProjectPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    router.push("/admin/projects");
+    router.push(`${ADMIN_UI_BASE}/projects`);
   }
 
   return (

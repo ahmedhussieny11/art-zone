@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/data";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
 function FormToggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {
   return (
@@ -339,7 +340,7 @@ export default function AdminContactPage() {
         </div>
 
         <p className="text-xs text-warmgray">
-          حساب انستغرام العام ما زال يُعدّل من <Link href="/admin/settings" className="text-gold hover:underline">الإعدادات</Link> إن احتجت ذلك للهيدر أو أماكن أخرى.
+          حساب انستغرام العام ما زال يُعدّل من <Link href={`${ADMIN_UI_BASE}/settings`} className="text-gold hover:underline">الإعدادات</Link> إن احتجت ذلك للهيدر أو أماكن أخرى.
         </p>
       </form>
     </div>

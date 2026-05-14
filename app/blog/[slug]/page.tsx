@@ -2,25 +2,24 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import UploadedImage from "@/components/UploadedImage";
+import ArticleCoverLightbox from "@/components/ArticleCoverLightbox";
 import FadeIn from "@/components/ui/FadeIn";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
-import { getPublishedArticles, getArticleBySlug } from "@/lib/data";
+import { getPublishedArticles, getArticleBySlug, getPublicSiteUrl, getSettings } from "@/lib/data";
 import { absoluteMediaUrl } from "@/lib/media-url";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return getPublishedArticles().map((a) => ({ slug: a.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) return {};
 
-  const siteUrl = "https://artzonedesign.com";
+  const siteUrl = getPublicSiteUrl();
 
   return {
     title: article.seoTitle || article.title,
@@ -65,7 +64,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     .filter((a) => a._id !== article._id && (a.category === article.category || a.tags.some((t) => article.tags.includes(t))))
     .slice(0, 3);
 
-  const siteUrl = "https://artzonedesign.com";
+  const siteUrl = getPublicSiteUrl();
+  const siteName = getSettings().siteName;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -76,7 +76,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     author: { "@type": "Organization", name: article.author },
     publisher: {
       "@type": "Organization",
-      name: "آرت زون للتصميم",
+      name: siteName,
       url: siteUrl,
     },
     datePublished: article.createdAt,
@@ -150,9 +150,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <section className="bg-offwhite">
           <div className="mx-auto max-w-5xl px-6 lg:px-12">
             <FadeIn>
-              <div className="relative -mt-8 aspect-[16/9] overflow-hidden rounded-xl shadow-2xl">
-                <UploadedImage src={article.coverImage} alt={article.title} fill className="object-contain bg-charcoal/5" sizes="100vw" priority />
-              </div>
+              <ArticleCoverLightbox src={article.coverImage} alt={article.title} />
             </FadeIn>
           </div>
         </section>

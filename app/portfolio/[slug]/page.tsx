@@ -6,15 +6,15 @@ import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import FadeIn from "@/components/ui/FadeIn";
 import ProjectCard from "@/components/ProjectCard";
+import PortfolioImageGallery from "@/components/PortfolioImageGallery";
 import { getProjects, getProjectBySlug } from "@/lib/data";
 
 const categoryLabels: Record<string, string> = { residential: "سكني", commercial: "تجاري", classic: "كلاسيكي", modern: "عصري" };
 
 interface ProjectPageProps { params: Promise<{ slug: string }>; }
 
-export async function generateStaticParams() {
-  return getProjects().map((p) => ({ slug: p.slug }));
-}
+/** قراءة المشاريع من القرص في كل طلب حتى تظهر الصور والمعرض بعد التعديل من لوحة التحكم */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -32,7 +32,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   if (!project) notFound();
 
   const related = getProjects().filter((p) => p.category === project.category && p._id !== project._id).slice(0, 3);
-  const hasGallery = project.gallery && project.gallery.length > 0;
+  const galleryImages = (project.gallery ?? []).map((s) => String(s).trim()).filter(Boolean);
+  const hasGallery = galleryImages.length > 0;
 
   return (
     <>
@@ -88,25 +89,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <section className="bg-white py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <FadeIn><h2 className="mb-8 text-center text-xs font-semibold tracking-[0.2em] text-gold">معرض الصور</h2></FadeIn>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {hasGallery ? (
-              project.gallery.map((img, i) => (
-                <FadeIn key={i} delay={i * 0.05}>
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <UploadedImage src={img} alt={`${project.title} - صورة ${i + 1}`} width={600} height={450} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
-                  </div>
-                </FadeIn>
-              ))
-            ) : (
-              [1, 2, 3, 4, 5, 6].map((i) => (
-                <FadeIn key={i} delay={i * 0.05}>
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <PlaceholderImage className="h-full w-full transition-transform duration-500 hover:scale-105" label={`${project.title} - صورة ${i}`} />
-                  </div>
-                </FadeIn>
-              ))
-            )}
-          </div>
+          {hasGallery ? (
+            <PortfolioImageGallery images={galleryImages} title={project.title} />
+          ) : (
+            <FadeIn>
+              <p className="text-center text-sm text-warmgray">لا توجد صور في المعرض بعد.</p>
+            </FadeIn>
+          )}
         </div>
       </section>
 
