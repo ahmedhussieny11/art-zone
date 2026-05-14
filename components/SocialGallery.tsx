@@ -3,6 +3,7 @@
 import { useState } from "react";
 import UploadedImage from "@/components/UploadedImage";
 import FadeIn from "./ui/FadeIn";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 interface Props {
   images: string[];
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function SocialGallery({ images, clickAction, customLink }: Props) {
+  const { t } = useSiteLocale();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (images.length === 0) return null;
@@ -47,7 +49,7 @@ export default function SocialGallery({ images, clickAction, customLink }: Props
             >
               <UploadedImage
                 src={src}
-                alt={`معرض ${i + 1}`}
+                alt={t("socialGallery.imageAlt", { n: String(i + 1) })}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                 sizes="(max-width: 768px) 33vw, 16vw"
@@ -110,7 +112,7 @@ export default function SocialGallery({ images, clickAction, customLink }: Props
           <div className="relative max-h-[85vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
             <UploadedImage
               src={images[lightboxIndex]}
-              alt={`معرض ${lightboxIndex + 1}`}
+              alt={t("socialGallery.imageAlt", { n: String(lightboxIndex + 1) })}
               width={1200}
               height={900}
               className="max-h-[85vh] w-auto rounded-lg object-contain"

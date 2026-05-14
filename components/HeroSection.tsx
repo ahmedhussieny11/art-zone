@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useInView } from "framer-motion";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 interface HeroSectionProps {
   label?: string;
@@ -14,7 +15,7 @@ interface HeroSectionProps {
   cta2Text?: string;
   cta2Link?: string;
   keywordsEnabled?: boolean;
-  keywords?: string[];
+  keywords?: string[] | undefined;
 }
 
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix: string }) {
@@ -38,13 +39,11 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix: string
   );
 }
 
-const stats = [
-  { value: 150, suffix: "+", label: "مشروع مكتمل" },
-  { value: 12, suffix: "+", label: "سنوات خبرة" },
-  { value: 98, suffix: "%", label: "رضا العملاء" },
+const statsSpec = [
+  { value: 150, suffix: "+", labelKey: "hero.statsProjects" as const },
+  { value: 12, suffix: "+", labelKey: "hero.statsYears" as const },
+  { value: 98, suffix: "%", labelKey: "hero.statsSatisfaction" as const },
 ];
-
-const DEFAULT_KEYWORDS = ["تصميم داخلي", "فاخر", "إبداعي", "عصري", "أنيق", "مميّز", "احترافي", "راقي"];
 
 export default function HeroSection({
   label = "استوديو تصميم داخلي فاخر",
@@ -55,12 +54,22 @@ export default function HeroSection({
   cta2Text = "احجز استشارة",
   cta2Link = "/contact",
   keywordsEnabled = true,
-  keywords = DEFAULT_KEYWORDS,
+  keywords,
 }: HeroSectionProps) {
-  const activeWords = keywords.length > 0 ? keywords : DEFAULT_KEYWORDS;
+  const { t } = useSiteLocale();
+  const activeWords = useMemo(() => {
+    if (keywords && keywords.length > 0) return keywords;
+    const csv = t("hero.defaultKeywordsCsv");
+    return csv.split("|").map((x) => x.trim()).filter(Boolean);
+  }, [keywords, t]);
+
+  const stats = useMemo(
+    () => statsSpec.map((s) => ({ ...s, label: t(s.labelKey) })),
+    [t]
+  );
 
   return (
-    <section className="relative flex min-h-screen flex-col overflow-hidden bg-charcoal">
+    <section className="relative flex min-h-screen flex-col overflow-hidden bg-charcoal dark:bg-zinc-950">
       {/* Grain texture overlay */}
       <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.03]">
         <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" /></filter>
@@ -164,7 +173,7 @@ export default function HeroSection({
           transition={{ duration: 2, repeat: Infinity }}
           className="flex flex-col items-center gap-2"
         >
-          <span className="text-[10px] tracking-[0.3em] text-white/25">انزل للأسفل</span>
+          <span className="text-[10px] tracking-[0.3em] text-white/25">{t("hero.scrollDown")}</span>
           <div className="h-8 w-px bg-gradient-to-b from-white/25 to-transparent" />
         </motion.div>
       </motion.div>

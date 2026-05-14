@@ -1,0 +1,199 @@
+{
+  "nav": {
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "services": "Services",
+    "blog": "Blog",
+    "contact": "Contact",
+    "menuAria": "Menu",
+    "langArabic": "Arabic",
+    "langEnglish": "English",
+    "themeLight": "Light mode",
+    "themeDark": "Dark mode",
+    "headerCtaDefault": "Get a quote"
+  },
+  "footer": {
+    "quickLinks": "Quick links",
+    "contactUs": "Contact us",
+    "whatsappPrefix": "WhatsApp:"
+  },
+  "portfolio": {
+    "metaTitle": "Portfolio",
+    "metaDescription": "Explore our luxury interior design portfolio spanning residential, commercial, classic, and contemporary styles.",
+    "label": "Our work",
+    "title": "Project gallery",
+    "description": "Every project is a unique story of creativity, craftsmanship, and collaboration.",
+    "emptyCategory": "No projects in this category."
+  },
+  "portfolioFilter": {
+    "all": "All"
+  },
+  "categories": {
+    "residential": "Residential",
+    "commercial": "Commercial",
+    "classic": "Classic",
+    "modern": "Modern"
+  },
+  "blog": {
+    "metaTitle": "Blog",
+    "metaDescription": "Interior design articles and tips from ART ZONE experts. Discover the latest trends and practical advice for your space.",
+    "metaOgTitle": "ART ZONE Design Blog",
+    "metaOgDescription": "Interior design articles and tips from ART ZONE experts.",
+    "label": "Blog",
+    "titleWithCategory": "Articles: {{cat}}",
+    "titleWithTag": "Tag: {{tag}}",
+    "titleDefault": "Articles & tips",
+    "description": "Latest articles and tips on interior design and décor from ART ZONE.",
+    "all": "All",
+    "readMore": "Read more",
+    "emptyPublish": "No published articles yet.",
+    "emptyCategory": "No articles in category \"{{cat}}\"",
+    "emptyTag": "No articles with tag \"{{tag}}\"",
+    "viewAll": "View all articles",
+    "metaKeywords": [
+      "interior design blog",
+      "decor tips",
+      "design trends",
+      "design articles"
+    ]
+  },
+  "contact": {
+    "metaTitle": "Contact us",
+    "metaDescription": "Get in touch with ART ZONE for your luxury interior design project. Book a free consultation today.",
+    "pageTitleDefault": "Contact us",
+    "pageSubtitleDefault": "We would love to hear about your project. Get in touch and let’s create something exceptional together.",
+    "sectionLabel": "Contact",
+    "mapTitle": "Our location on the map",
+    "mapMissing": "Add a Google Maps link from site settings"
+  },
+  "contactForm": {
+    "thanksTitle": "Thank you!",
+    "thanksBody": "Your message was received. We will get back to you shortly.",
+    "sendAnother": "Send another message",
+    "fullName": "Full name *",
+    "fullNamePlaceholder": "Your full name",
+    "phone": "Phone *",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "service": "Service type *",
+    "servicePlaceholder": "Select a service",
+    "budget": "Budget range",
+    "budgetPlaceholder": "Select a budget range",
+    "message": "Project details *",
+    "messagePlaceholder": "Tell us about your project, size, and any special requirements...",
+    "error": "Something went wrong. Please try again or reach us on WhatsApp.",
+    "submit": "Send message",
+    "submitting": "Sending...",
+    "requestConsultation": "Request a consultation",
+    "requestSubtitle": "Fill out the form below and our team will get back to you within 24 hours."
+  },
+  "steps": {
+    "goToStep": "Go to step {{n}}: {{title}}",
+    "stepDot": "Step {{n}}"
+  },
+  "hero": {
+    "statsProjects": "Completed projects",
+    "statsYears": "Years of experience",
+    "statsSatisfaction": "Client satisfaction",
+    "scrollDown": "Scroll down",
+    "defaultKeywordsCsv": "Interior design|Luxury|Creative|Modern|Elegant|Distinctive|Professional|Refined"
+  },
+  "featured": {
+    "viewAll": "View all projects"
+  },
+  "cta": {
+    "freeConsultation": "Book a free consultation",
+    "fallbackTitle": "Have a project in mind?",
+    "fallbackDescription": "Let’s turn your vision into reality. Contact us today to begin your design journey.",
+    "fallbackWhatsapp": "Contact us on WhatsApp"
+  },
+  "testimonials": {
+    "next": "Next testimonial",
+    "prev": "Previous testimonial",
+    "goTo": "Go to testimonial {{n}}"
+  },
+  "whatsapp": {
+    "aria": "Contact us on WhatsApp"
+  },
+  "videoScroll": {
+    "preparing": "Preparing video…",
+    "skip": "Skip",
+    "skipSection": "Skip section"
+  },
+  "brandSlider": {
+    "defaultAria": "Interior design portfolio",
+    "prev": "Previous slide",
+    "next": "Next slide",
+    "goToSlide": "Slide {{n}}"
+  },
+  "zoom": {
+    "aria": "Design portal"
+  },
+  "portfolioProject": {
+    "back": "Back to portfolio",
+    "concept": "Concept",
+    "beforeAfter": "Before & after",
+    "gallery": "Gallery",
+    "galleryEmpty": "No gallery images yet.",
+    "materials": "Materials used",
+    "related": "Related projects",
+    "metaDescription": "{{title}} — {{cat}} interior design project by ART ZONE Design."
+  },
+  "blogArticle": {
+    "breadcrumbHome": "Home",
+    "breadcrumbBlog": "Blog",
+    "share": "Share this article:",
+    "shareTwitter": "Share on X (Twitter)",
+    "shareFacebook": "Share on Facebook",
+    "shareWhatsapp": "Share on WhatsApp",
+    "related": "Related articles"
+  },
+  "instagram": {
+    "followUs": "Follow us",
+    "followInstagram": "Follow us on Instagram",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "twitter": "X (Twitter)",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "snapchat": "Snapchat",
+    "linkedin": "LinkedIn"
+  },
+  "beforeAfter": {
+    "before": "Before",
+    "after": "After",
+    "sliderAria": "Before and after comparison"
+  },
+  "gallery": {
+    "zoom": "Zoom",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "lightboxAria": "Image gallery",
+    "imageAlt": "{{title}} - image {{n}}",
+    "coverZoom": "Enlarge cover image",
+    "coverAlt": "Cover image"
+  },
+  "socialGallery": {
+    "imageAlt": "Gallery {{n}}"
+  },
+  "servicesPage": {
+    "metaTitle": "Our services",
+    "metaDescription": "ART ZONE offers luxury interior design, professional fit-out, and dedicated supervision for residential and commercial spaces.",
+    "defaultLabel": "What we offer",
+    "defaultTitle": "Our services",
+    "defaultDescription": "From the first idea to final delivery, we offer comprehensive design solutions tailored to your unique vision.",
+    "defaultButton": "Request a service",
+    "defaultProcessLabel": "How we work",
+    "defaultProcessTitle": "Our process",
+    "defaultProcessDescription": "A smooth journey from your first idea to a finished space."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for does not exist or has been moved.",
+    "home": "Back to home"
+  },
+  "loading": {
+    "text": "Loading..."
+  }
+}

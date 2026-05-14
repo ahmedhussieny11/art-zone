@@ -13,12 +13,25 @@ import { getProjects, getTestimonials, getSettings, getHomePageArticles, getBran
 import { getZoomPortalConfig } from "@/lib/zoom-portal-data";
 import { getVideoScrollConfig } from "@/lib/video-scroll-data";
 import type { VideoScrollPosition } from "@/lib/video-scroll-config";
+import { getSiteLocale } from "@/lib/get-site-locale";
+import { getDict, t } from "@/lib/locale-dict";
+import { getLocalizedSettings } from "@/lib/localized-settings";
+import {
+  getLocalizedArticle,
+  getLocalizedBrandSliderConfig,
+  getLocalizedProjects,
+  getLocalizedTestimonials,
+  getLocalizedVideoScrollConfig,
+  getLocalizedZoomPortalConfig,
+} from "@/lib/localized-entities";
 
-export default function HomePage() {
-  const settings = getSettings();
-  const zoomPortalCfg = getZoomPortalConfig();
-  const brandSlider = getBrandSliderConfig();
-  const videoScrollCfg = getVideoScrollConfig();
+export default async function HomePage() {
+  const locale = await getSiteLocale();
+  const settings = getLocalizedSettings(getSettings(), locale);
+  const dict = getDict(locale);
+  const zoomPortalCfg = getLocalizedZoomPortalConfig(getZoomPortalConfig(), locale);
+  const brandSlider = getLocalizedBrandSliderConfig(getBrandSliderConfig(), locale);
+  const videoScrollCfg = getLocalizedVideoScrollConfig(getVideoScrollConfig(), locale);
 
   /* Render the scroll-video section at exactly one slot in the page. */
   const renderVideoScroll = (slot: VideoScrollPosition) =>
@@ -26,17 +39,18 @@ export default function HomePage() {
       <VideoScrollSection config={videoScrollCfg} />
     ) : null;
 
-  const projects = getProjects()
-    .filter((p) => p.featured)
-    .map((p) => ({
-      _id: p._id,
-      title: p.title,
-      slug: { current: p.slug },
-      category: p.category,
-      coverImage: p.coverImage,
-    }));
+  const projects = getLocalizedProjects(
+    getProjects().filter((p) => p.featured),
+    locale
+  ).map((p) => ({
+    _id: p._id,
+    title: p.title,
+    slug: { current: p.slug },
+    category: p.category,
+    coverImage: p.coverImage,
+  }));
 
-  const testimonials = getTestimonials().map((t) => ({
+  const testimonials = getLocalizedTestimonials(getTestimonials(), locale).map((t) => ({
     _id: t._id,
     clientName: t.clientName,
     quote: t.quote,
@@ -46,16 +60,19 @@ export default function HomePage() {
       : undefined,
   }));
 
-  const latestArticles = getHomePageArticles(settings).map((a) => ({
-    _id: a._id,
-    title: a.title,
-    slug: a.slug,
-    excerpt: a.excerpt,
-    coverImage: a.coverImage,
-    category: a.category,
-    author: a.author,
-    createdAt: a.createdAt,
-  }));
+  const latestArticles = getHomePageArticles(settings).map((a) => {
+    const loc = getLocalizedArticle(a, locale);
+    return {
+      _id: loc._id,
+      title: loc.title,
+      slug: loc.slug,
+      excerpt: loc.excerpt,
+      coverImage: loc.coverImage,
+      category: loc.category,
+      author: loc.author,
+      createdAt: loc.createdAt,
+    };
+  });
 
   return (
     <>
@@ -89,6 +106,7 @@ export default function HomePage() {
       {renderVideoScroll("after-brand-slider")}
       <FeaturedProjects
         projects={projects}
+        viewAllLabel={t(dict, "featured.viewAll")}
         label={settings.projectsLabel}
         title={settings.projectsTitle}
         description={settings.projectsDescription}
@@ -100,6 +118,10 @@ export default function HomePage() {
       {zoomPortalCfg.enabled && <ZoomPortal config={zoomPortalCfg} />}
       {renderVideoScroll("after-zoom-portal")}
       <StepsSection
+        label={settings.processLabel}
+        title={settings.processTitle}
+        description={settings.processDescription}
+        processSteps={settings.processSteps}
         labelSize={settings.sectionLabelSize}
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
@@ -123,6 +145,9 @@ export default function HomePage() {
           labelSize={settings.sectionLabelSize}
           titleSize={settings.sectionTitleSize}
           bodySize={settings.sectionBodySize}
+          readMoreText={t(dict, "blog.readMore")}
+          dateLocale={locale === "en" ? "en-US" : "ar-SA"}
+          contentDir={locale === "ar" ? "rtl" : "ltr"}
         />
       )}
       {renderVideoScroll("after-articles")}

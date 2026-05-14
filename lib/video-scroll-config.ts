@@ -57,7 +57,7 @@ export const DEFAULT_VIDEO_SCROLL_CONFIG: VideoScrollConfig = {
     "حرّك صفحتك للأسفل وشاهد كل لقطة تنبض بالحياة — كل بكسل مضبوط على إيقاع تمريرك.",
   scrollHint: "مرّر للأسفل",
   /** مسافة أطول = تغيير أقل في وقت الفيديو لكل بكسل سكروب = أخف على المعالج */
-  scrollMultiplier: 8,
+  scrollMultiplier: 14,
   scrub: 0.08,
   bgColor: "#2C2C2C",
   accentColor: "#C9A96E",

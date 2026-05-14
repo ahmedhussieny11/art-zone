@@ -4,9 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { VideoScrollConfig } from "@/lib/video-scroll-config";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 const HTML_SCRUB_CLASS = "video-scroll-scrub";
-/** استعادة إعداد GSAP الافتراضي للـ ticker بعد مغادرة القسم */
+const PROGRESS_EPS = 1e-6;
+/** حد أدنى بين عمليتي seek — من غيره السكروب المستمر يرمّي عشرات الـ seeks/ث والديكودر يتقل بعد ثواني */
+const MIN_SEEK_MS = 30;
 const TICKER_LAG_DEFAULT = () => gsap.ticker.lagSmoothing(500, 33);
 
 if (typeof window !== "undefined") {
@@ -23,6 +26,7 @@ function hintPlainText(hint: string): string {
 }
 
 export default function VideoScrollSection({ config }: VideoScrollSectionProps) {
+  const { t, locale } = useSiteLocale();
   const {
     videoSrc,
     posterSrc,
@@ -31,7 +35,6 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     description,
     scrollHint,
     scrollMultiplier,
-    scrub,
     bgColor,
     accentColor,
     vignetteOpacity,
@@ -77,7 +80,6 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       }
       const pct = Math.min(1, end / duration);
       const now = performance.now();
-      /* تحديث React فقط عند تغيّر ≥3% أو كل 350ms — يخفّف اللاج من الـ progress */
       if (
         Math.abs(pct - lastUiPct) >= 0.03 ||
         now - lastUiAt > 350 ||
@@ -89,6 +91,9 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       } else {
         paintBufferUi(pct);
       }
+      if (pct >= 0.995) {
+        video.removeEventListener("progress", onProgress);
+      }
     };
 
     const markReady = () => {
@@ -98,7 +103,14 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       if (video.readyState >= 2) setIsReady(true);
     };
 
-    const onProgress = () => updateBuffered();
+    let progRaf = 0;
+    const onProgress = () => {
+      if (progRaf) return;
+      progRaf = requestAnimationFrame(() => {
+        progRaf = 0;
+        updateBuffered();
+      });
+    };
     const onLoadedData = () => {
       updateBuffered();
       markReady();
@@ -124,6 +136,7 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
 
     return () => {
       cancelled = true;
+      if (progRaf) cancelAnimationFrame(progRaf);
       video.removeEventListener("progress", onProgress);
       video.removeEventListener("loadeddata", onLoadedData);
       video.removeEventListener("loadedmetadata", onLoadedMeta);
@@ -137,79 +150,120 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     const video = videoRef.current;
     if (!section || !video) return;
 
-    const latest = { p: 0 };
+    let stRef: ScrollTrigger | null = null;
     let rafId = 0;
-    let lastApplied = -1;
+    let loopOn = false;
+    let lastProgress = -1;
+    let lastSeekWallMs = 0;
 
     const setHtmlScrub = (on: boolean) => {
       document.documentElement.classList.toggle(HTML_SCRUB_CLASS, on);
     };
 
-    /* أثناء السكروب على الفيديو: تعطيل lag smoothing في الـ ticker حتى لا يقفز الوقت ويثقل الشعور */
     const enableScrollSyncMode = () => {
       gsap.ticker.lagSmoothing(0, 16);
     };
 
-    const flushSeek = () => {
-      rafId = 0;
+    const applyFromProgress = () => {
+      const st = stRef;
+      if (!st) return;
       const d = video.duration;
       if (!Number.isFinite(d) || d <= 0) return;
-      const next = Math.max(0, Math.min(d, latest.p * d));
-      /* تجاهل seeks أقل من ~12ms عن آخر تطبيق — يقلّل ضغط الـ decoder بدون ما يبان تقطيع */
-      if (lastApplied >= 0 && Math.abs(next - lastApplied) < 1 / 80) return;
-      lastApplied = next;
+      const p = st.progress;
+      if (lastProgress >= 0 && Math.abs(p - lastProgress) < PROGRESS_EPS) {
+        return;
+      }
+      const now = performance.now();
+      if (now - lastSeekWallMs < MIN_SEEK_MS) {
+        return;
+      }
+      const t = Math.max(0, Math.min(d, p * d));
+      if (Math.abs(video.currentTime - t) < 0.02) {
+        lastProgress = p;
+        lastSeekWallMs = now;
+        return;
+      }
+      lastSeekWallMs = now;
+      lastProgress = p;
       try {
-        video.currentTime = next;
+        video.currentTime = t;
       } catch {
         /* Safari */
       }
     };
 
-    const queueSeek = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(flushSeek);
+    const tick = () => {
+      if (!loopOn) {
+        rafId = 0;
+        return;
+      }
+      applyFromProgress();
+      rafId = requestAnimationFrame(tick);
+    };
+
+    const startSyncLoop = () => {
+      loopOn = true;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+
+    const stopSyncLoop = () => {
+      loopOn = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
     };
 
     const trigger = ScrollTrigger.create({
       trigger: section,
       start: "top top",
       end: "bottom bottom",
-      scrub,
-      fastScrollEnd: 0.35,
+      scrub: true,
+      fastScrollEnd: true,
       invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        latest.p = self.progress;
-        queueSeek();
+      onRefresh: () => {
+        lastProgress = -1;
+        lastSeekWallMs = 0;
+        applyFromProgress();
       },
       onEnter: () => {
         setHtmlScrub(true);
         enableScrollSyncMode();
+        startSyncLoop();
       },
       onLeave: () => {
+        stopSyncLoop();
         setHtmlScrub(false);
         TICKER_LAG_DEFAULT();
       },
       onEnterBack: () => {
         setHtmlScrub(true);
         enableScrollSyncMode();
+        startSyncLoop();
       },
       onLeaveBack: () => {
+        stopSyncLoop();
         setHtmlScrub(false);
         TICKER_LAG_DEFAULT();
       },
     });
+
+    stRef = trigger;
+    ScrollTrigger.refresh();
+    lastProgress = -1;
+    lastSeekWallMs = 0;
+    applyFromProgress();
 
     const refresh = () => ScrollTrigger.refresh();
     window.addEventListener("resize", refresh);
 
     return () => {
       window.removeEventListener("resize", refresh);
-      if (rafId) cancelAnimationFrame(rafId);
+      stopSyncLoop();
+      stRef = null;
       trigger.kill();
       setHtmlScrub(false);
       TICKER_LAG_DEFAULT();
     };
-  }, [isReady, scrub, scrollMultiplier]);
+  }, [isReady, scrollMultiplier]);
 
   const handleSkip = () => {
     const section = sectionRef.current;
@@ -230,6 +284,7 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       style={{
         height: `${Math.max(2, scrollMultiplier) * 100}vh`,
         backgroundColor: bgColor,
+        overscrollBehavior: "contain",
       }}
       className="relative w-full"
       aria-label={title}
@@ -267,8 +322,8 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
 
         {!isReady && (
           <div
-            className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-sm"
-            style={{ backgroundColor: `${bgColor}E6` }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center"
+            style={{ backgroundColor: `${bgColor}F0` }}
           >
             <div className="h-1 w-48 overflow-hidden rounded-full bg-white/15">
               <div
@@ -282,15 +337,15 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
             </div>
             <span
               className="mt-3 text-[10px] tracking-[0.3em] text-white/50"
-              style={{ direction: "rtl" }}
+              style={{ direction: locale === "ar" ? "rtl" : "ltr" }}
             >
-              جارٍ تحضير الفيديو…
+              {t("videoScroll.preparing")}
             </span>
           </div>
         )}
 
         {isReady && bufferedPct < 0.999 && (
-          <div className="pointer-events-none absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-[9px] tracking-wider text-white/70 backdrop-blur-sm">
+          <div className="pointer-events-none absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1 text-[9px] tracking-wider text-white/70">
             <span
               className="inline-block h-1.5 w-1.5 rounded-full opacity-80"
               style={{ backgroundColor: accentColor }}
@@ -303,14 +358,14 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-5 pb-28 pt-20 text-center sm:px-8 sm:pb-32">
             <div
               className="flex max-w-2xl flex-col items-center"
-              style={{ direction: "rtl" }}
+              style={{ direction: locale === "ar" ? "rtl" : "ltr" }}
             >
               {label && (
                 <span
-                  className="mb-3 inline-block rounded-full px-5 py-2 text-xs font-semibold tracking-[0.2em] backdrop-blur-md sm:mb-4"
+                  className="mb-3 inline-block rounded-full px-5 py-2 text-xs font-semibold tracking-[0.2em] sm:mb-4"
                   style={{
                     color: accentColor,
-                    backgroundColor: "rgba(0,0,0,0.45)",
+                    backgroundColor: "rgba(0,0,0,0.62)",
                     border: `1px solid ${accentColor}66`,
                   }}
                 >
@@ -336,14 +391,14 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
                 <button
                   type="button"
                   onClick={handleSkip}
-                  className="pointer-events-auto mt-6 touch-manipulation rounded-full border px-4 py-1.5 text-[11px] font-medium tracking-[0.22em] text-white/90 backdrop-blur-md transition-[border-color,background-color,transform] hover:bg-white/10 active:scale-[0.98] sm:mt-7 sm:px-5 sm:py-2 sm:text-xs"
+                  className="pointer-events-auto mt-6 touch-manipulation rounded-full border px-4 py-1.5 text-[11px] font-medium tracking-[0.22em] text-white/90 transition-[border-color,background-color,transform] hover:bg-white/10 active:scale-[0.98] sm:mt-7 sm:px-5 sm:py-2 sm:text-xs"
                   style={{
                     borderColor: `${accentColor}55`,
-                    backgroundColor: "rgba(0,0,0,0.28)",
+                    backgroundColor: "rgba(0,0,0,0.55)",
                   }}
-                  aria-label={skipText || "تخطي القسم"}
+                  aria-label={skipText || t("videoScroll.skipSection")}
                 >
-                  {skipText || "تخطي"}
+                  {skipText || t("videoScroll.skip")}
                 </button>
               )}
             </div>
@@ -355,15 +410,15 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
             <button
               type="button"
               onClick={handleSkip}
-              className="pointer-events-auto touch-manipulation rounded-full border px-4 py-1.5 text-[11px] font-medium tracking-[0.22em] text-white/90 backdrop-blur-md transition-colors hover:bg-white/10 active:scale-[0.98] sm:px-5 sm:py-2 sm:text-xs"
+              className="pointer-events-auto touch-manipulation rounded-full border px-4 py-1.5 text-[11px] font-medium tracking-[0.22em] text-white/90 transition-colors hover:bg-white/10 active:scale-[0.98] sm:px-5 sm:py-2 sm:text-xs"
               style={{
                 direction: "rtl",
                 borderColor: `${accentColor}55`,
-                backgroundColor: "rgba(0,0,0,0.28)",
+                backgroundColor: "rgba(0,0,0,0.55)",
               }}
-              aria-label={skipText || "تخطي"}
+              aria-label={skipText || t("videoScroll.skipSection")}
             >
-              {skipText || "تخطي"}
+              {skipText || t("videoScroll.skip")}
             </button>
           </div>
         )}

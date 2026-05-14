@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 export type ContactFormProps = {
   phonePlaceholder: string;
@@ -14,6 +15,7 @@ export default function ContactForm({
   serviceOptions,
   budgetRanges,
 }: ContactFormProps) {
+  const { t } = useSiteLocale();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -69,16 +71,16 @@ export default function ContactForm({
           </svg>
         </div>
         <h3 className="mt-6 font-serif text-2xl font-light text-charcoal">
-          شكراً لك!
+          {t("contactForm.thanksTitle")}
         </h3>
         <p className="mt-2 text-warmgray">
-          تم استلام رسالتك وسنتواصل معك في أقرب وقت.
+          {t("contactForm.thanksBody")}
         </p>
         <button
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-medium tracking-widest text-gold hover:text-gold-dark"
         >
-          إرسال رسالة أخرى
+          {t("contactForm.sendAnother")}
         </button>
       </motion.div>
     );
@@ -92,15 +94,15 @@ export default function ContactForm({
             htmlFor="name"
             className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
           >
-            الاسم الكامل *
+            {t("contactForm.fullName")}
           </label>
           <input
             type="text"
             id="name"
             name="name"
             required
-            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
-            placeholder="اسمك الكامل"
+            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
+            placeholder={t("contactForm.fullNamePlaceholder")}
           />
         </div>
         <div>
@@ -108,7 +110,7 @@ export default function ContactForm({
             htmlFor="phone"
             className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
           >
-            رقم الجوال *
+            {t("contactForm.phone")}
           </label>
           <input
             type="tel"
@@ -116,7 +118,7 @@ export default function ContactForm({
             name="phone"
             required
             dir="ltr"
-            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
+            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
             placeholder={phonePlaceholder}
           />
         </div>
@@ -127,15 +129,15 @@ export default function ContactForm({
           htmlFor="email"
           className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
         >
-          البريد الإلكتروني
+          {t("contactForm.email")}
         </label>
         <input
           type="email"
           id="email"
           name="email"
           dir="ltr"
-          className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
-          placeholder="your@email.com"
+          className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
+          placeholder={t("contactForm.emailPlaceholder")}
         />
       </div>
 
@@ -145,15 +147,15 @@ export default function ContactForm({
             htmlFor="service"
             className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
           >
-            نوع الخدمة *
+            {t("contactForm.service")}
           </label>
           <select
             id="service"
             name="service"
             required
-            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
+            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
           >
-            <option value="">اختر الخدمة</option>
+            <option value="">{t("contactForm.servicePlaceholder")}</option>
             {serviceOptions.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -166,14 +168,14 @@ export default function ContactForm({
             htmlFor="budget"
             className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
           >
-            نطاق الميزانية
+            {t("contactForm.budget")}
           </label>
           <select
             id="budget"
             name="budget"
-            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
+            className="w-full border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
           >
-            <option value="">اختر نطاق الميزانية</option>
+            <option value="">{t("contactForm.budgetPlaceholder")}</option>
             {budgetRanges.map((b) => (
               <option key={b} value={b}>
                 {b}
@@ -188,21 +190,21 @@ export default function ContactForm({
           htmlFor="message"
           className="mb-2 block text-xs font-medium tracking-widest text-charcoal"
         >
-          تفاصيل المشروع *
+          {t("contactForm.message")}
         </label>
         <textarea
           id="message"
           name="message"
           rows={5}
           required
-          className="w-full resize-none border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold"
-          placeholder="أخبرنا عن مشروعك، المساحة، وأي متطلبات خاصة..."
+          className="w-full resize-none border border-warmgray/30 bg-transparent px-4 py-3 text-sm text-charcoal outline-none transition-colors focus:border-gold dark:border-white/15"
+          placeholder={t("contactForm.messagePlaceholder")}
         />
       </div>
 
       {status === "error" && (
         <p className="text-sm text-red-500">
-          حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل معنا عبر واتساب.
+          {t("contactForm.error")}
         </p>
       )}
 
@@ -211,7 +213,7 @@ export default function ContactForm({
         disabled={status === "loading"}
         className="w-full bg-gold px-8 py-4 text-sm font-medium tracking-widest text-white transition-all hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {status === "loading" ? "جاري الإرسال..." : "إرسال الرسالة"}
+        {status === "loading" ? t("contactForm.submitting") : t("contactForm.submit")}
       </button>
     </form>
   );

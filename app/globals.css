@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-offwhite: #F5F0EB;
   --color-charcoal: #2C2C2C;
@@ -38,6 +40,11 @@
     color: white;
   }
 
+  .dark ::selection {
+    background-color: var(--color-gold);
+    color: #1a1816;
+  }
+
   .placeholder-image {
     background:
       linear-gradient(145deg, #c4bdb5 0%, #a89f95 40%, #8a8078 70%, #736b63 100%);
@@ -63,4 +70,20 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-charcoal);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1a1816;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #5c5854;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #8a8580;
 }

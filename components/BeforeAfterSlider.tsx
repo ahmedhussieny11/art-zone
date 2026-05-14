@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import PlaceholderImage from "./ui/PlaceholderImage";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 interface BeforeAfterSliderProps {
   beforeImage: unknown;
@@ -11,9 +12,14 @@ interface BeforeAfterSliderProps {
 }
 
 export default function BeforeAfterSlider({
-  beforeLabel = "قبل",
-  afterLabel = "بعد",
+  beforeImage: _beforeImage,
+  afterImage: _afterImage,
+  beforeLabel,
+  afterLabel,
 }: BeforeAfterSliderProps) {
+  const { t } = useSiteLocale();
+  const b = beforeLabel ?? t("beforeAfter.before");
+  const a = afterLabel ?? t("beforeAfter.after");
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -59,7 +65,7 @@ export default function BeforeAfterSlider({
       onMouseLeave={handleMouseUp}
       onTouchMove={handleTouchMove}
       role="slider"
-      aria-label="مقارنة قبل وبعد"
+      aria-label={t("beforeAfter.sliderAria")}
       aria-valuenow={Math.round(position)}
       aria-valuemin={0}
       aria-valuemax={100}
@@ -70,7 +76,7 @@ export default function BeforeAfterSlider({
       }}
     >
       {/* After (full background) */}
-      <PlaceholderImage className="absolute inset-0 h-full w-full" label={afterLabel} />
+      <PlaceholderImage className="absolute inset-0 h-full w-full" label={a} />
 
       {/* Before (clipped) */}
       <div
@@ -79,7 +85,7 @@ export default function BeforeAfterSlider({
       >
         <PlaceholderImage
           className="h-full w-full brightness-75"
-          label={beforeLabel}
+          label={b}
         />
       </div>
 
@@ -108,10 +114,10 @@ export default function BeforeAfterSlider({
 
       {/* Labels */}
       <span className="absolute right-4 top-4 z-10 bg-charcoal/60 px-3 py-1 text-xs font-medium tracking-widest text-white backdrop-blur-sm">
-        {beforeLabel}
+        {b}
       </span>
       <span className="absolute left-4 top-4 z-10 bg-charcoal/60 px-3 py-1 text-xs font-medium tracking-widest text-white backdrop-blur-sm">
-        {afterLabel}
+        {a}
       </span>
     </div>
   );

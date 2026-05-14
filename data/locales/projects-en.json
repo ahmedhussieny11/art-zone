@@ -1,0 +1,32 @@
+{
+  "modern-villa-interior": {
+    "title": "Modern villa",
+    "concept": "A contemporary residential project blending minimalist aesthetics with warm natural materials. The design focuses on open layouts, clean lines, and a neutral palette with champagne gold accents.",
+    "materials": ["Italian marble", "Oak wood", "Polished brass", "Linen"]
+  },
+  "luxury-office-space": {
+    "title": "Luxury office",
+    "concept": "An executive office environment designed to inspire productivity while maintaining refined elegance. Premium materials and bespoke furniture define every corner.",
+    "materials": ["Walnut veneer", "Smoked glass", "Leather", "Brass"]
+  },
+  "classic-majlis-design": {
+    "title": "Classic majlis",
+    "concept": "A traditional majlis reimagined with classic craftsmanship and luxurious fabrics. Ornate details meet subtle contemporary touches for a space that honours heritage and comfort.",
+    "materials": ["Silk fabric", "Gold leaf", "Crystal", "Carved wood"]
+  },
+  "boutique-hotel-lobby": {
+    "title": "Boutique hotel lobby",
+    "concept": "A striking boutique hotel lobby designed to captivate guests from the moment they arrive. Dramatic lighting, curated art, and fine furniture create an unforgettable first impression.",
+    "materials": ["Travertine", "Velvet", "Aged bronze", "Onyx"]
+  },
+  "modern-penthouse-suite": {
+    "title": "Modern penthouse",
+    "concept": "A city penthouse where floor-to-ceiling windows meet sleek contemporary design.",
+    "materials": ["Polished concrete", "Black steel", "White oak", "Glass"]
+  },
+  "heritage-palace-renovation": {
+    "title": "Heritage palace renovation",
+    "concept": "A careful renovation of a heritage palace preserving its historic grandeur while introducing modern comfort seamlessly.",
+    "materials": ["Handmade tile", "Cedar wood", "Stained glass", "Ornate plaster"]
+  }
+}

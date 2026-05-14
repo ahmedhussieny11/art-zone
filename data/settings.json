@@ -278,6 +278,7 @@
   "homeBlogDescription": "نصائح واتجاهات في التصميم الداخلي من فريق آرت زون.",
   "homeBlogLimit": 3,
   "homeBlogCtaText": "عرض جميع المقالات",
+  "darkModeEnabled": false,
   "homeBlogArticleIds": [
     "a1",
     "a2",

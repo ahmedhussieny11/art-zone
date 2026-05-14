@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import UploadedImage from "@/components/UploadedImage";
 import { normalizeMediaPath } from "@/lib/media-url";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 export default function PortfolioImageGallery({
   images,
@@ -11,6 +12,7 @@ export default function PortfolioImageGallery({
   images: string[];
   title: string;
 }) {
+  const { t } = useSiteLocale();
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -59,13 +61,13 @@ export default function PortfolioImageGallery({
           >
             <UploadedImage
               src={img}
-              alt={`${title} - صورة ${i + 1}`}
+              alt={t("gallery.imageAlt", { title, n: String(i + 1) })}
               width={600}
               height={450}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <span className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/50 px-2 py-0.5 text-[10px] text-white/90 opacity-0 transition group-hover:opacity-100">
-              تكبير
+              {t("gallery.zoom")}
             </span>
           </button>
         ))}
@@ -76,7 +78,7 @@ export default function PortfolioImageGallery({
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
-          aria-label="معرض الصور"
+          aria-label={t("gallery.lightboxAria")}
           onClick={close}
         >
           <button
@@ -84,7 +86,7 @@ export default function PortfolioImageGallery({
             className="absolute left-4 top-4 z-[102] rounded-full bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20"
             onClick={close}
           >
-            إغلاق
+            {t("gallery.close")}
           </button>
           {normalized.length > 1 && (
             <>
@@ -95,7 +97,7 @@ export default function PortfolioImageGallery({
                   e.stopPropagation();
                   go(-1);
                 }}
-                aria-label="السابق"
+                aria-label={t("gallery.prev")}
               >
                 ‹
               </button>
@@ -106,7 +108,7 @@ export default function PortfolioImageGallery({
                   e.stopPropagation();
                   go(1);
                 }}
-                aria-label="التالي"
+                aria-label={t("gallery.next")}
               >
                 ›
               </button>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UploadedImage from "@/components/UploadedImage";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 interface FooterSettings {
   logo: string | null;
@@ -39,6 +40,7 @@ const FOOTER_SOCIAL_ICONS: Record<string, string> = {
 
 export default function Footer() {
   const pathname = usePathname();
+  const { t, locale } = useSiteLocale();
   const [s, setS] = useState<FooterSettings>(defaults);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function Footer() {
       .then((r) => r.json())
       .then((data) => setS({ ...defaults, ...data }))
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   const phone = (s.whatsappNumber || "+201012345678").replace(/\+/g, "");
   const nameParts = (s.siteName || "ARTZONE").split(/(?<=ART)/i);
@@ -55,7 +57,7 @@ export default function Footer() {
   );
 
   return (
-    <footer className="bg-charcoal text-offwhite/80">
+    <footer className="bg-charcoal text-offwhite/80 dark:bg-zinc-950 dark:text-stone-300/90">
       <div className="mx-auto max-w-5xl px-6 py-20">
         <div className="grid gap-12 text-center md:grid-cols-3 md:text-right">
           <div>
@@ -87,14 +89,14 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-xs font-semibold tracking-widest text-gold">روابط سريعة</h4>
+            <h4 className="mb-4 text-xs font-semibold tracking-widest text-gold">{t("footer.quickLinks")}</h4>
             <ul className="space-y-3">
               {[
-                { href: "/", label: "الرئيسية" },
-                { href: "/portfolio", label: "أعمالنا" },
-                { href: "/services", label: "خدماتنا" },
-                { href: "/blog", label: "المدونة" },
-                { href: "/contact", label: "تواصل معنا" },
+                { href: "/", label: t("nav.home") },
+                { href: "/portfolio", label: t("nav.portfolio") },
+                { href: "/services", label: t("nav.services") },
+                { href: "/blog", label: t("nav.blog") },
+                { href: "/contact", label: t("nav.contact") },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm transition-colors hover:text-gold">{link.label}</Link>
@@ -104,10 +106,12 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-xs font-semibold tracking-widest text-gold">تواصل معنا</h4>
+            <h4 className="mb-4 text-xs font-semibold tracking-widest text-gold">{t("footer.contactUs")}</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href={`https://wa.me/${phone}`} className="transition-colors hover:text-gold">واتساب: {s.whatsappNumber}</a>
+                <a href={`https://wa.me/${phone}`} className="transition-colors hover:text-gold">
+                  {t("footer.whatsappPrefix")} {s.whatsappNumber}
+                </a>
               </li>
               <li>
                 <a href={`mailto:${s.email}`} className="transition-colors hover:text-gold">{s.email}</a>

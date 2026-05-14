@@ -37,7 +37,12 @@ export default function VideoScrollAdminPage() {
       await fetch("/api/admin/video-scroll", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cfg),
+        body: JSON.stringify({
+          ...cfg,
+          /* ثابت من الكود — مفيش تحكم من لوحة الإدارة */
+          scrollMultiplier: DEFAULT_VIDEO_SCROLL_CONFIG.scrollMultiplier,
+          scrub: DEFAULT_VIDEO_SCROLL_CONFIG.scrub,
+        }),
       });
       setSaved(true);
       setPreviewKey((k) => k + 1);
@@ -45,22 +50,6 @@ export default function VideoScrollAdminPage() {
     } finally {
       setSaving(false);
     }
-  }
-
-  /* Reset to the optimal smooth defaults, but keep the user's video, poster,
-     position and enabled flag — those are user-specific choices. */
-  function resetToSmoothDefaults() {
-    if (!cfg) return;
-    if (!confirm("هترجع كل الإعدادات للقيم الافتراضية المُحسَّنة؟ (الفيديو والموضع والظهور لن يتغيروا)")) {
-      return;
-    }
-    setCfg({
-      ...DEFAULT_VIDEO_SCROLL_CONFIG,
-      videoSrc: cfg.videoSrc,
-      posterSrc: cfg.posterSrc,
-      position: cfg.position,
-      enabled: cfg.enabled,
-    });
   }
 
   if (!cfg) return <div className="text-warmgray">جاري التحميل...</div>;
@@ -74,7 +63,7 @@ export default function VideoScrollAdminPage() {
             قسم الفيديو التفاعلي
           </h1>
           <p className="mt-1 text-sm text-warmgray">
-            تحكم كامل في الفيديو والنصوص وسرعة التمرير
+            تحكم في الفيديو والنصوص والموضع والمظهر
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -171,7 +160,7 @@ export default function VideoScrollAdminPage() {
             onChange={(v) => set("videoSrc", v)}
             uploadEndpoint="/api/admin/upload-video-scroll"
             fieldName="file"
-            hint='ارفع أي فيديو (MP4 / MOV / WhatsApp …) — السيرفر يحوّله تلقائياً لـ H.264 بكل إطار keyframe لسلاسة كاملة. تحويل ~10 ثواني لكل دقيقة فيديو.'
+            hint="ارفع أي فيديو (MP4 / MOV / واتساب …) — السيرفر يحوّله لـ H.264 مع keyframe كل إطار لسلاسة السكروب. لو ظهر تحذير: ثبّت FFmpeg في PATH، أو أضف في `.env` مسارًا كاملًا لـ ffmpeg.exe تحت FFMPEG_PATH أو FFMPEG_BIN، ثم أعد الرفع. لو ملف ffmpeg.exe ناقص من node_modules شغّل: npm rebuild ffmpeg-static"
           />
 
           <Input
@@ -213,79 +202,6 @@ export default function VideoScrollAdminPage() {
             onChange={(v) => set("scrollHint", v)}
             placeholder="↓ مرّر للأسفل"
           />
-        </Card>
-
-        {/* Behavior */}
-        <Card title="سلوك السكروب" icon="🎚️">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-charcoal">
-              طول مسافة التمرير (سرعة الحركة)
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min={2}
-                max={10}
-                step={0.5}
-                value={cfg.scrollMultiplier}
-                onChange={(e) =>
-                  set("scrollMultiplier", Number(e.target.value))
-                }
-                className="flex-1 accent-gold"
-              />
-              <span className="w-16 text-center text-sm font-bold text-gold">
-                {cfg.scrollMultiplier}× ({cfg.scrollMultiplier * 100}vh)
-              </span>
-            </div>
-            <p className="mt-1 text-[10px] text-warmgray">
-              أصغر = حركة أسرع. أكبر = حركة أبطأ وأخف على الجهاز. (الموصى به: 7–9)
-            </p>
-          </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-medium text-charcoal">
-              نعومة السكروب (Scrub)
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min={0.1}
-                max={2}
-                step={0.1}
-                value={cfg.scrub}
-                onChange={(e) => set("scrub", Number(e.target.value))}
-                className="flex-1 accent-gold"
-              />
-              <span className="w-12 text-center text-sm font-bold text-gold">
-                {cfg.scrub}s
-              </span>
-            </div>
-            <p className="mt-1 text-[10px] text-warmgray">
-              أصغر = استجابة فورية. أكبر = حركة ناعمة بتأخير. (الموصى به: 0.05–0.18 للسلاسة)
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 text-amber-600">💡</span>
-              <div className="flex-1">
-                <p className="text-xs font-medium text-amber-900">
-                  مش متأكد من الإعدادات الأنسب؟
-                </p>
-                <p className="mt-0.5 text-[10px] text-amber-700">
-                  ارجع للإعدادات الافتراضية المُحسَّنة (سكروب سلس + سرعة
-                  مناسبة). فيديوك وموضعه ما يتغيروش.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={resetToSmoothDefaults}
-                className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-amber-700"
-              >
-                ⟲ استعادة الافتراضي
-              </button>
-            </div>
-          </div>
         </Card>
 
         {/* Skip button */}

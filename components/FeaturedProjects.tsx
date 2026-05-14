@@ -14,6 +14,7 @@ interface Project {
 
 interface FeaturedProjectsProps {
   projects?: Project[];
+  viewAllLabel?: string;
   label?: string;
   title?: string;
   description?: string;
@@ -24,6 +25,7 @@ interface FeaturedProjectsProps {
 
 export default function FeaturedProjects({
   projects,
+  viewAllLabel,
   label = "أعمالنا",
   title = "مشاريع مميزة",
   description = "مجموعة مختارة من أبرز مشاريع التصميم الداخلي لدينا.",
@@ -64,7 +66,7 @@ export default function FeaturedProjects({
               href="/portfolio"
               className="group inline-flex items-center gap-3 text-base font-medium tracking-widest text-charcoal transition-colors hover:text-gold"
             >
-              عرض جميع المشاريع
+              {viewAllLabel ?? "عرض جميع المشاريع"}
               <svg
                 className="h-4 w-4 transition-transform group-hover:-translate-x-1"
                 fill="none"

@@ -13,6 +13,7 @@ import {
 } from "framer-motion";
 import type { BrandSliderConfig, BrandSliderSlide } from "@/lib/data";
 import { parallaxFactors, slideVariantsFor } from "@/lib/brand-slider-variants";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 const easeLux = [0.33, 0, 0.2, 1] as const;
 
@@ -34,6 +35,7 @@ function frameStyle(config: BrandSliderConfig): CSSProperties {
 }
 
 export default function BrandBannerSlider({ config }: { config: BrandSliderConfig }) {
+  const { t } = useSiteLocale();
   const slides = config.slides;
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState(0);
@@ -80,7 +82,7 @@ export default function BrandBannerSlider({ config }: { config: BrandSliderConfi
   return (
     <section
       className="relative w-full overflow-x-clip overflow-y-visible bg-[#1a1918] py-10 md:py-14"
-      aria-label={config.sectionTitle || "معرض أعمال التصميم"}
+      aria-label={config.sectionTitle || t("brandSlider.defaultAria")}
     >
       <motion.div
         className="pointer-events-none absolute inset-0 opacity-100"
@@ -160,7 +162,7 @@ export default function BrandBannerSlider({ config }: { config: BrandSliderConfi
                 type="button"
                 onClick={prev}
                 className="group absolute start-1 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.08] bg-charcoal/55 text-white/90 shadow-lg backdrop-blur-md transition-all duration-500 hover:border-gold/35 hover:bg-charcoal/80 hover:text-gold-light sm:start-2 md:start-4 lg:start-6"
-                aria-label="الشريحة السابقة"
+                aria-label={t("brandSlider.prev")}
               >
                 <motion.span className="flex" whileHover={{ x: -2 }} whileTap={{ scale: 0.94 }}>
                   <Chevron direction="prev" />
@@ -170,7 +172,7 @@ export default function BrandBannerSlider({ config }: { config: BrandSliderConfi
                 type="button"
                 onClick={next}
                 className="group absolute end-1 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.08] bg-charcoal/55 text-white/90 shadow-lg backdrop-blur-md transition-all duration-500 hover:border-gold/35 hover:bg-charcoal/80 hover:text-gold-light sm:end-2 md:end-4 lg:end-6"
-                aria-label="الشريحة التالية"
+                aria-label={t("brandSlider.next")}
               >
                 <motion.span className="flex" whileHover={{ x: 2 }} whileTap={{ scale: 0.94 }}>
                   <Chevron direction="next" />
@@ -196,7 +198,7 @@ export default function BrandBannerSlider({ config }: { config: BrandSliderConfi
                     type="button"
                     onClick={() => go(i, i > index ? 1 : -1)}
                     className="group relative flex flex-col items-center gap-1.5"
-                    aria-label={`الشريحة ${i + 1}`}
+                    aria-label={t("brandSlider.goToSlide", { n: String(i + 1) })}
                     aria-current={i === index}
                   >
                     <span

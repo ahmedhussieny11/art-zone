@@ -1,0 +1,156 @@
+{
+  "siteDescription": "We craft inspiring luxury interiors. From concept to completion, we turn spaces into lasting works of art.",
+  "siteDefaultTitle": "ART ZONE Design | Luxury Interior Design",
+  "siteTitleTemplate": "%s | ART ZONE Design",
+  "siteSeoKeywords": [
+    "interior design",
+    "luxury design",
+    "residential design",
+    "commercial design",
+    "fit-out",
+    "ART ZONE Design"
+  ],
+  "headerCtaText": "Get a quote",
+  "footerText": "We craft inspiring luxury interiors. From concept to completion, we turn spaces into lasting works of art.",
+  "copyrightText": "ART ZONE Design. All rights reserved.",
+  "whatsappMessage": "Hello, I would like to inquire about your interior design services",
+  "address": "Madinaty, Cairo",
+  "addressNote": "By appointment only",
+  "workingHours": "Sunday – Thursday: 9:00 AM – 6:00 PM",
+  "closedDays": "Friday – Saturday: Closed",
+  "contactPageTitle": "Contact us",
+  "contactPageSubtitle": "We would love to hear about your project. Get in touch and let’s create something exceptional together.",
+  "contactFormTitle": "Request a consultation",
+  "contactFormSubtitle": "Fill out the form below and our team will get back to you within 24 hours.",
+  "contactServiceOptions": [
+    "Interior design",
+    "Fit-out",
+    "Supervision",
+    "Consultation",
+    "Other"
+  ],
+  "contactBudgetRanges": [
+    "Under 200,000 EGP",
+    "200,000 – 500,000 EGP",
+    "500,000 – 1,500,000 EGP",
+    "Over 1,500,000 EGP",
+    "Not sure yet"
+  ],
+  "contactWhatsappTitle": "WhatsApp",
+  "contactWhatsappCta": "Contact us now",
+  "contactWhatsappHint": "Quick replies during business hours",
+  "contactEmailTitle": "Email",
+  "contactStudioTitle": "Visit the studio",
+  "contactHoursTitle": "Business hours",
+  "heroLabel": "Luxury interior design studio",
+  "heroTitle": "We create spaces that inspire",
+  "heroSubtitle": "From concept to completion, we turn ordinary spaces into extraordinary experiences. Every detail is crafted with precision, passion, and purpose.",
+  "heroCta1Text": "View our work",
+  "heroCta2Text": "Book a consultation",
+  "aboutLabel": "About us",
+  "aboutTitle": "We define luxury through design",
+  "aboutDescription": "At ART ZONE Design, we believe exceptional spaces tell a story. Our team of creative designers and skilled craftspeople work together to create environments that are both stunning and practical. With over a decade of experience in luxury interior design, we have earned the trust of distinguished clients across the region.",
+  "projectsLabel": "Our work",
+  "projectsTitle": "Featured projects",
+  "projectsDescription": "A curated selection of our finest interior design projects.",
+  "testimonialsLabel": "Client testimonials",
+  "testimonialsTitle": "What our clients say",
+  "ctaBannerTitle": "Have a project in mind?",
+  "ctaBannerDescription": "Let’s turn your vision into reality. Contact us today to begin your design journey.",
+  "ctaBannerButtonText": "Contact us on WhatsApp",
+  "socialSectionLabel": "Follow us",
+  "socialSectionDescription": "Follow our journey on social media for the latest projects and behind the scenes.",
+  "socialSectionButtonText": "Follow us on Instagram",
+  "servicesPageLabel": "What we offer",
+  "servicesPageTitle": "Our services",
+  "servicesPageDescription": "From the first idea to final delivery, we offer comprehensive design solutions tailored to your unique vision.",
+  "servicesPageButtonText": "Request a service",
+  "heroKeywords": [
+    "interior design",
+    "luxury",
+    "creative",
+    "modern",
+    "elegant",
+    "distinctive",
+    "professional",
+    "refined"
+  ],
+  "bentoBadgeText": "Over a decade of experience",
+  "bentoFeatures": [
+    {
+      "title": "Design consultations",
+      "description": "We start from your first idea and map a clear roadmap for your project.",
+      "icon": "compass"
+    },
+    {
+      "title": "Interior design",
+      "description": "3D designs that balance beauty and function with meticulous detail.",
+      "icon": "palette"
+    },
+    {
+      "title": "Supervision & execution",
+      "description": "Day-to-day oversight of every detail to ensure results match your vision.",
+      "icon": "ruler"
+    },
+    {
+      "title": "Furnishing & styling",
+      "description": "Furniture and accessories selected to complement the identity of the space.",
+      "icon": "armchair"
+    }
+  ],
+  "bentoStats": [
+    { "value": "150+", "label": "Completed projects" },
+    { "value": "12+", "label": "Years of experience" },
+    { "value": "98%", "label": "Client satisfaction" }
+  ],
+  "processLabel": "How we work",
+  "processTitle": "Our process",
+  "processDescription": "A smooth journey from your first idea to a finished space.",
+  "processSteps": [
+    {
+      "step": "01",
+      "title": "Consultation",
+      "description": "We begin with an in-depth consultation to understand your vision, lifestyle, and requirements."
+    },
+    {
+      "step": "02",
+      "title": "Concept development",
+      "description": "Our designers develop a full concept including mood boards, layouts, and material selection."
+    },
+    {
+      "step": "03",
+      "title": "Design & detailing",
+      "description": "Every element is refined with technical drawings, 3D visualizations, and detailed specifications."
+    },
+    {
+      "step": "04",
+      "title": "Execution",
+      "description": "Our team manages the build end-to-end to deliver the design to the highest standards."
+    }
+  ],
+  "projectCategories": [
+    { "value": "residential", "label": "Residential" },
+    { "value": "commercial", "label": "Commercial" },
+    { "value": "classic", "label": "Classic" },
+    { "value": "modern", "label": "Modern" }
+  ],
+  "articleCategories": [
+    { "value": "design-tips", "label": "Design tips" },
+    { "value": "trends", "label": "Design trends" },
+    { "value": "inspiration", "label": "Inspiration" },
+    { "value": "guides", "label": "Guides & references" }
+  ],
+  "zoomPortalTopBadge": "Design portal",
+  "zoomPortalTopHint": "Scroll to enter our world",
+  "zoomPortalFinalTitle": "Every detail tells a story",
+  "zoomPortalFinalSub": "From dining to living — we design spaces where details come alive",
+  "zoomPortalCta1Text": "Explore our portfolio",
+  "zoomPortalCta2Text": "Contact us",
+  "zoomPortalLayer1Label": "ART ZONE",
+  "zoomPortalLayer2Label": "Dining",
+  "zoomPortalLayer3Label": "Living room",
+  "homeBlogLabel": "Blog",
+  "homeBlogTitle": "Latest articles",
+  "homeBlogDescription": "Interior design tips and trends from the ART ZONE team.",
+  "homeBlogCtaText": "View all articles"
+}

@@ -1,0 +1,14 @@
+{
+  "s1": {
+    "title": "Interior design",
+    "description": "End-to-end interior design from concept to completion. We create unique spaces that reflect your personality and lifestyle through carefully chosen materials, colours, and furniture."
+  },
+  "s2": {
+    "title": "Fit-out",
+    "description": "Professional fit-out services that turn designs into reality with precision and quality. Our experienced team manages every aspect of the build to ensure flawless execution of every detail."
+  },
+  "s3": {
+    "title": "Supervision",
+    "description": "Dedicated project supervision to ensure your design vision is delivered perfectly. We follow every stage of construction while maintaining the highest standards of quality and craftsmanship."
+  }
+}

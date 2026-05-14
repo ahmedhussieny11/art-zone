@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 export default function WhatsAppButton() {
+  const { t, locale } = useSiteLocale();
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [enabled, setEnabled] = useState(true);
@@ -23,7 +25,7 @@ export default function WhatsAppButton() {
         setEnabled(true);
         setLoaded(true);
       });
-  }, []);
+  }, [locale]);
 
   if (!loaded || !enabled) return null;
 
@@ -36,7 +38,7 @@ export default function WhatsAppButton() {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="تواصل عبر واتساب"
+      aria-label={t("whatsapp.aria")}
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg transition-shadow hover:shadow-xl"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}

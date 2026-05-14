@@ -1,0 +1,13 @@
+{
+  "sectionEyebrow": "Décor · Fit-out · Interior design",
+  "cta1Text": "Portfolio",
+  "cta2Text": "Design consultation",
+  "slides": [
+    { "id": "living-1", "title": "Luxury living room", "subtitle": "Light classic balance and warm lighting" },
+    { "id": "dining-1", "title": "Elegant dining table", "subtitle": "Premium materials and refined finishing" },
+    { "id": "lounge", "title": "Lounge corner", "subtitle": "Wood and fabric in calm visual harmony" },
+    { "id": "dining-2", "title": "Contemporary classic", "subtitle": "Ornate walls and soft lighting" },
+    { "id": "open", "title": "Open plan", "subtitle": "Flow between dining and living" },
+    { "id": "tv", "title": "TV wall", "subtitle": "Marble, wood, and integrated lighting" }
+  ]
+}

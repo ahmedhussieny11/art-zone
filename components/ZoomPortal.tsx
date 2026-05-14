@@ -12,6 +12,7 @@ import {
 import UploadedImage from "@/components/UploadedImage";
 import Link from "next/link";
 import type { ZoomPortalConfig, ZoomPortalLayer, ZoomPortalHotspot } from "@/lib/zoom-portal-data";
+import { useSiteLocale } from "@/components/SiteProviders";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Spring config
@@ -215,6 +216,7 @@ function ProgressDot({
    Main component
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 export default function ZoomPortal({ config }: { config: ZoomPortalConfig }) {
+  const { t } = useSiteLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress]   = useState(0);
   const [hoverCta1, setHoverCta1] = useState(false);
@@ -245,7 +247,7 @@ export default function ZoomPortal({ config }: { config: ZoomPortalConfig }) {
       ref={containerRef}
       style={{ height: config.scrollHeight }}
       className="relative"
-      aria-label="بوابة التصميم"
+      aria-label={t("zoom.aria")}
     >
       <div className="sticky top-0 h-screen overflow-hidden" style={{ backgroundColor: config.bgColor }}>
 

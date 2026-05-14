@@ -202,6 +202,25 @@ export default function AppearancePage() {
           </div>
         </Section>
 
+        <Section icon={<IconMoon />} title="الوضع الداكن للزوار" color="bg-slate-100 text-slate-700">
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-gold focus:ring-gold"
+              checked={settings.darkModeEnabled === true}
+              onChange={(e) =>
+                setSettings((prev) => (prev ? { ...prev, darkModeEnabled: e.target.checked } : null))
+              }
+            />
+            <span>
+              <span className="font-medium text-charcoal">تفعيل زر الفاتح / الداكن في شريط التنقل</span>
+              <span className="mt-1 block text-xs leading-relaxed text-warmgray">
+                عند الإيقاف، الموقع للزوار يبقى بالوضع الفاتح فقط. لوحة التحكم لا تتأثر.
+              </span>
+            </span>
+          </label>
+        </Section>
+
         {/* Font Sizes */}
         <Section icon={<IconFont />} title="حجم الخطوط" color="bg-teal-50 text-teal-600">
           <div className="space-y-5">
@@ -316,6 +335,13 @@ function Section({ icon, title, color, children }: { icon: React.ReactNode; titl
 }
 
 function IconPalette() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" /></svg>; }
+function IconMoon() {
+  return (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+    </svg>
+  );
+}
 function IconColor() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>; }
 function IconFont() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7V5a2 2 0 012-2h6.5M3 7H1m2 0h2m12-2h4a1 1 0 011 1v1M3 17v2a2 2 0 002 2h6.5M3 17H1m2 0h2m12 2h4a1 1 0 001-1v-1m-8-12v16m-4-4h8" /></svg>; }
 function IconService() { return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>; }

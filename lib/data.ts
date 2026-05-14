@@ -230,6 +230,8 @@ export interface SiteSettings {
   /** عند التلقائي: عدد المقالات (١–٦) */
   homeBlogLimit: number;
   homeBlogCtaText: string;
+  /** عند التفعيل: زر الوضع الداكن/الفاتح في شريط التنقل للزوار */
+  darkModeEnabled: boolean;
 }
 
 const DEFAULT_PROJECTS: Project[] = [
@@ -518,6 +520,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   homeBlogDescription: "نصائح واتجاهات في التصميم الداخلي من فريق آرت زون.",
   homeBlogLimit: 3,
   homeBlogCtaText: "عرض جميع المقالات",
+  darkModeEnabled: false,
 };
 
 // Projects

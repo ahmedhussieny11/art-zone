@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
+import SiteProviders from "@/components/SiteProviders";
 import { getSettings, getPublicSiteUrl } from "@/lib/data";
+import { getSiteLocale } from "@/lib/get-site-locale";
+import { getLocalizedSettings } from "@/lib/localized-settings";
+import { getDict } from "@/lib/locale-dict";
 import { normalizeMediaPath } from "@/lib/media-url";
 import fs from "fs";
 import path from "path";
@@ -34,7 +38,8 @@ function getIconPath(): string | null {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const s = getSettings();
+  const locale = await getSiteLocale();
+  const s = getLocalizedSettings(getSettings(), locale);
   const base = getPublicSiteUrl();
   const defaultTitle = (s.siteDefaultTitle && s.siteDefaultTitle.trim()) || s.siteName;
   let template = (s.siteTitleTemplate && s.siteTitleTemplate.trim()) || `%s | ${s.siteName}`;
@@ -46,7 +51,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: defaultTitle, template },
     description: s.siteDescription,
     ...(keywords ? { keywords } : {}),
-    openGraph: { type: "website", locale: "ar_SA", siteName: s.siteName },
+    openGraph: {
+      type: "website",
+      locale: locale === "en" ? "en_US" : "ar_SA",
+      siteName: s.siteName,
+    },
   };
 }
 
@@ -59,33 +68,42 @@ const DEFAULT_COLORS = {
   goldDark: "#B89555",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const settings = getSettings();
+  const locale = await getSiteLocale();
+  const dict = getDict(locale);
   const c = settings.colors || DEFAULT_COLORS;
   const scale = Math.max(80, Math.min(150, Number(settings.fontScale) || 100));
   const iconPath = getIconPath();
+  const darkModeEnabled = settings.darkModeEnabled === true;
 
   const themeCSS = `
-    :root, *, *::before, *::after {
-      --color-offwhite: ${c.offwhite || DEFAULT_COLORS.offwhite} !important;
-      --color-charcoal: ${c.charcoal || DEFAULT_COLORS.charcoal} !important;
-      --color-warmgray: ${c.warmgray || DEFAULT_COLORS.warmgray} !important;
-      --color-gold: ${c.gold || DEFAULT_COLORS.gold} !important;
-      --color-gold-light: ${c.goldLight || DEFAULT_COLORS.goldLight} !important;
-      --color-gold-dark: ${c.goldDark || DEFAULT_COLORS.goldDark} !important;
+    :root {
+      --color-offwhite: ${c.offwhite || DEFAULT_COLORS.offwhite};
+      --color-charcoal: ${c.charcoal || DEFAULT_COLORS.charcoal};
+      --color-warmgray: ${c.warmgray || DEFAULT_COLORS.warmgray};
+      --color-gold: ${c.gold || DEFAULT_COLORS.gold};
+      --color-gold-light: ${c.goldLight || DEFAULT_COLORS.goldLight};
+      --color-gold-dark: ${c.goldDark || DEFAULT_COLORS.goldDark};
+    }
+    html.dark {
+      --color-offwhite: #13110f;
+      --color-charcoal: #ebe7e2;
+      --color-warmgray: #9a948d;
     }
     html { font-size: ${scale}% !important; }
   `;
 
   return (
     <html
-      lang="ar"
-      dir="rtl"
+      lang={locale === "en" ? "en" : "ar"}
+      dir={locale === "ar" ? "rtl" : "ltr"}
       className={`${amiri.variable} ${cairo.variable} antialiased`}
+      suppressHydrationWarning
     >
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
@@ -98,7 +116,13 @@ export default function RootLayout({
         )}
       </head>
       <body className="min-h-screen flex flex-col">
-        <SiteShell>{children}</SiteShell>
+        <SiteProviders
+          initialLocale={locale}
+          dict={dict}
+          darkModeEnabled={darkModeEnabled}
+        >
+          <SiteShell>{children}</SiteShell>
+        </SiteProviders>
       </body>
     </html>
   );

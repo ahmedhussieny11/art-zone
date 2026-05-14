@@ -1,0 +1,37 @@
+{
+  "topBadge": "Design portal",
+  "topHint": "Scroll to enter our world",
+  "finalTitle": "Every detail tells a story",
+  "finalSub": "From dining to living — we design spaces where details come alive",
+  "cta1Text": "Explore our portfolio",
+  "cta2Text": "Contact us",
+  "layers": [
+    {
+      "id": "layer-1",
+      "label": "ART ZONE",
+      "hotspots": [
+        { "id": "h1", "title": "Marble wall", "value": "Natural Breccia marble", "note": "Italian import" },
+        { "id": "h2", "title": "Flooring", "value": "Polished grey ceramic 60×60" },
+        { "id": "h3", "title": "Lighting", "value": "LED track lights", "note": "3000K warm white" }
+      ]
+    },
+    {
+      "id": "layer-2",
+      "label": "Dining",
+      "hotspots": [
+        { "id": "h4", "title": "Marble wall", "value": "Breccia Vineto marble", "note": "Single continuous slab" },
+        { "id": "h5", "title": "Chairs", "value": "Natural ash wood", "note": "Cream fabric seat" },
+        { "id": "h6", "title": "Dining table", "value": "Natural oak", "note": "White epoxy base" }
+      ]
+    },
+    {
+      "id": "layer-3",
+      "label": "Living room",
+      "hotspots": [
+        { "id": "h7", "title": "Sofa", "value": "Beige bouclé fabric", "note": "Contemporary design" },
+        { "id": "h8", "title": "Flooring", "value": "Matte grey ceramic 60×60" },
+        { "id": "h9", "title": "Curtains", "value": "Beige linen", "note": "Double layer" }
+      ]
+    }
+  ]
+}

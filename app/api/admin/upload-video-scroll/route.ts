@@ -16,58 +16,133 @@ function ensureUploadDir() {
   }
 }
 
-/**
- * Re-encode any input video into a format ideal for scroll-bound playback:
- *   - H.264 main profile  ➜ universal browser compatibility (fixes HEVC/AV1/etc.)
- *   - Every frame keyframe (g=1) ➜ instant seeking for smooth scrubbing
- *   - Scaled to max 540px wide ➜ decode أخف على الموبايل
- *   - No audio ➜ smaller, no autoplay restrictions
- *   - +faststart ➜ playback starts before download completes
- */
-async function reencode(input: string, output: string): Promise<void> {
-  const ffmpegModule = await import("ffmpeg-static");
-  const ffmpegPath = (ffmpegModule.default ?? ffmpegModule) as unknown as
-    | string
-    | null;
-  if (!ffmpegPath || typeof ffmpegPath !== "string") {
-    throw new Error("ffmpeg-static binary not available in this environment");
+/** سلاسة السكروب: كل إطار keyframe + H.264 + عرض معقول */
+const VF_PRESETS = [
+  /* بدون علامات اقتباس — أوثق على ويندوز من min(540,iw) داخل quotes */
+  "fps=30,scale=min(540\\,iw):-2",
+  "fps=30,scale=540:-2",
+  "fps=24,scale=720:-2",
+] as const;
+
+async function collectFfmpegCandidates(): Promise<string[]> {
+  const list: string[] = [];
+  for (const key of ["FFMPEG_PATH", "FFMPEG_BIN"] as const) {
+    const v = process.env[key]?.trim();
+    if (v && fs.existsSync(v)) list.push(v);
   }
-  if (!fs.existsSync(ffmpegPath)) {
-    throw new Error(`ffmpeg binary missing at ${ffmpegPath}`);
+  try {
+    const mod = await import("ffmpeg-static");
+    const p = (mod.default ?? mod) as unknown;
+    if (typeof p === "string" && p && fs.existsSync(p)) list.push(p);
+  } catch {
+    /* ffmpeg-static غير متاح */
   }
+  list.push("ffmpeg");
+  return [...new Set(list)];
+}
+
+function runFfmpeg(
+  ffmpegPath: string,
+  input: string,
+  output: string,
+  vf: string,
+  simpleX264: boolean,
+): Promise<void> {
+  const x264Args = simpleX264
+    ? [
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "23",
+        "-pix_fmt",
+        "yuv420p",
+        "-g",
+        "1",
+        "-keyint_min",
+        "1",
+        "-movflags",
+        "+faststart",
+      ]
+    : [
+        "-c:v",
+        "libx264",
+        "-profile:v",
+        "main",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "23",
+        "-pix_fmt",
+        "yuv420p",
+        "-g",
+        "1",
+        "-keyint_min",
+        "1",
+        "-sc_threshold",
+        "0",
+        "-bf",
+        "0",
+        "-x264-params",
+        "no-scenecut=1:bframes=0:ref=1",
+        "-movflags",
+        "+faststart",
+      ];
+
+  const args = [
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-y",
+    "-i",
+    input,
+    "-an",
+    "-vf",
+    vf,
+    ...x264Args,
+    output,
+  ];
 
   return new Promise((resolve, reject) => {
-    const args = [
-      "-hide_banner",
-      "-loglevel", "error",
-      "-y",
-      "-i", input,
-      "-an",
-      "-vf", "scale='min(540,iw)':-2,fps=30",
-      "-c:v", "libx264",
-      "-profile:v", "main",
-      "-preset", "veryfast",
-      "-crf", "23",
-      "-pix_fmt", "yuv420p",
-      "-g", "1",
-      "-keyint_min", "1",
-      "-sc_threshold", "0",
-      "-bf", "0",
-      "-x264-params", "no-scenecut=1:bframes=0:ref=1",
-      "-movflags", "+faststart",
-      output,
-    ];
-    const proc = spawn(ffmpegPath, args);
+    const proc = spawn(ffmpegPath, args, {
+      windowsHide: true,
+      stdio: ["ignore", "ignore", "pipe"],
+    });
     let stderr = "";
-    proc.stderr?.on("data", (chunk) => {
+    proc.stderr?.on("data", (chunk: Buffer) => {
       stderr += chunk.toString();
     });
-    proc.on("error", reject);
+    proc.on("error", (e) => reject(e));
     proc.on("close", (code) => {
       if (code === 0) resolve();
-      else reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-400)}`));
+      else reject(new Error(`ffmpeg ${ffmpegPath} exit ${code}: ${stderr.slice(-800)}`));
     });
   });
+}
+
+/**
+ * إعادة ترميز لسلاسة السكروب: H.264 + g=1 + faststart.
+ * يجرّب عدة مسارات لـ ffmpeg (متغير البيئة، ffmpeg-static، PATH) وفلاتر أبسط عند الفشل.
+ */
+async function reencode(input: string, output: string): Promise<void> {
+  const candidates = await collectFfmpegCandidates();
+  let lastErr: Error | null = null;
+
+  for (const bin of candidates) {
+    for (const vf of VF_PRESETS) {
+      for (const simple of [false, true] as const) {
+        try {
+          await runFfmpeg(bin, input, output, vf, simple);
+          return;
+        } catch (e) {
+          lastErr = e instanceof Error ? e : new Error(String(e));
+        }
+      }
+    }
+  }
+
+  throw lastErr ?? new Error("ffmpeg failed with no candidates");
 }
 
 export async function POST(request: Request) {
@@ -82,7 +157,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "لم يتم اختيار ملف" }, { status: 400 });
     }
 
-    /* ── Write the upload to a temp file so ffmpeg can read it ── */
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "scroll-vid-"));
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const inputExt = path.extname(file.name) || ".mp4";
@@ -92,7 +166,6 @@ export async function POST(request: Request) {
     const arrayBuffer = await file.arrayBuffer();
     fs.writeFileSync(tmpInput, Buffer.from(arrayBuffer));
 
-    /* ── Try to re-encode. Fall back to raw if ffmpeg unavailable. ── */
     let finalBuffer: Buffer;
     let processed = false;
     let warning: string | null = null;
@@ -102,16 +175,15 @@ export async function POST(request: Request) {
       finalBuffer = fs.readFileSync(tmpOutput);
       processed = true;
     } catch (err) {
-      console.warn(
-        "[upload-video-scroll] re-encode failed, falling back to raw:",
-        err
-      );
+      const detail = err instanceof Error ? err.message : String(err);
+      console.warn("[upload-video-scroll] re-encode failed, falling back to raw:", detail);
       finalBuffer = Buffer.from(arrayBuffer);
       warning =
-        "تعذر إعادة الترميز التلقائي — تم رفع الفيديو كما هو. لو ما اشتغلش، رمّزه يدوياً بـ H.264.";
+        "تعذر إعادة الترميز التلقائي — الفيديو اترفع كما هو (فيديو واتساب غالباً بدون keyframes كثيرة = سكروب متقطع). " +
+        "ثبّت FFmpeg في PATH أو عيّن في `.env` أحد المتغيرين: FFMPEG_PATH أو FFMPEG_BIN (مسار ffmpeg.exe كامل) ثم ارفع الفيديو تاني، " +
+        "أو رمّزه يدوياً إلى H.264 مع keyframe كل إطار.";
     }
 
-    /* ── Save the final file ── */
     const finalName = `scroll-${id}.mp4`;
     const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 
@@ -140,14 +212,18 @@ export async function POST(request: Request) {
   } catch (err) {
     return NextResponse.json(
       { error: (err as Error).message || "فشل معالجة الفيديو" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     try {
       if (tmpInput) fs.unlinkSync(tmpInput);
-    } catch {}
+    } catch {
+      /* ignore */
+    }
     try {
       if (tmpOutput) fs.unlinkSync(tmpOutput);
-    } catch {}
+    } catch {
+      /* ignore */
+    }
   }
 }

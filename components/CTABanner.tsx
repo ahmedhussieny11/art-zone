@@ -1,18 +1,24 @@
 import Link from "next/link";
 import FadeIn from "./ui/FadeIn";
 import { getSettings } from "@/lib/data";
+import { getSiteLocale } from "@/lib/get-site-locale";
+import { getLocalizedSettings } from "@/lib/localized-settings";
+import { getDict, t } from "@/lib/locale-dict";
 
-export default function CTABanner() {
-  const settings = getSettings();
+export default async function CTABanner() {
+  const locale = await getSiteLocale();
+  const dict = getDict(locale);
+  const settings = getLocalizedSettings(getSettings(), locale);
   const phone = (settings.whatsappNumber || "+201012345678").replace(/\+/g, "");
   const message = settings.whatsappMessage || "";
   const waUrl = message
     ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
     : `https://wa.me/${phone}`;
 
-  const bannerTitle = settings.ctaBannerTitle || "هل لديك مشروع في ذهنك؟";
-  const bannerDesc = settings.ctaBannerDescription || "دعنا نحول رؤيتك إلى واقع. تواصل معنا اليوم لبدء رحلة التصميم.";
-  const bannerBtn = settings.ctaBannerButtonText || "تواصل معنا عبر واتساب";
+  const bannerTitle = settings.ctaBannerTitle?.trim() || t(dict, "cta.fallbackTitle");
+  const bannerDesc = settings.ctaBannerDescription?.trim() || t(dict, "cta.fallbackDescription");
+  const bannerBtn = settings.ctaBannerButtonText?.trim() || t(dict, "cta.fallbackWhatsapp");
+  const freeConsultation = t(dict, "cta.freeConsultation");
 
   return (
     <section className="relative overflow-hidden bg-offwhite py-24 md:py-32">
@@ -30,7 +36,7 @@ export default function CTABanner() {
               href="/contact"
               className="inline-flex items-center justify-center bg-gold px-10 py-4 text-sm font-medium tracking-widest text-white transition-all hover:bg-gold-dark"
             >
-              احجز استشارة مجانية
+              {freeConsultation}
             </Link>
             <a
               href={waUrl}

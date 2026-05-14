@@ -1,15 +1,18 @@
 {
   "enabled": true,
-  "videoSrc": "/scroll-video.mp4",
+  "position": "after-bento",
+  "videoSrc": "/uploads/scroll-1778793490253-e8fq80.mp4",
   "posterSrc": "",
   "label": "تجربة بصرية",
   "title": "",
-  "description": "حرّك صفحتك للأسفل وشاهد كل لقطة تنبض بالحياة ",
-  "scrollHint": "↓ مرّر للأسفل",
-  "scrollMultiplier": 6,
-  "scrub": 0.7,
+  "description": "حرّك صفحتك للأسفل وشاهد كل لقطة تنبض بالحياة",
+  "scrollHint": "مرّر للأسفل",
+  "scrollMultiplier": 14,
+  "scrub": 0.08,
   "bgColor": "#2C2C2C",
   "accentColor": "#C9A96E",
   "vignetteOpacity": 0.55,
-  "showOverlay": true
+  "showOverlay": true,
+  "showSkip": true,
+  "skipText": "تخطي"
 }

@@ -4,12 +4,21 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import FadeIn from "@/components/ui/FadeIn";
 import CTABanner from "@/components/CTABanner";
 import { getServices, getSettings } from "@/lib/data";
+import { getSiteLocale } from "@/lib/get-site-locale";
+import { getDict, t } from "@/lib/locale-dict";
+import { getLocalizedSettings } from "@/lib/localized-settings";
+import { getLocalizedServices } from "@/lib/localized-entities";
 
-export const metadata: Metadata = {
-  title: "خدماتنا",
-  description:
-    "آرت زون للتصميم تقدم خدمات التصميم الداخلي الفاخر والتشطيبات الاحترافية والإشراف المتخصص للمساحات السكنية والتجارية.",
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getSiteLocale();
+  const dict = getDict(locale);
+  return {
+    title: t(dict, "servicesPage.metaTitle"),
+    description: t(dict, "servicesPage.metaDescription"),
+  };
+}
 
 function ServiceIcon({ icon }: { icon: string }) {
   const icons: Record<string, React.ReactNode> = {
@@ -37,23 +46,39 @@ function ServiceIcon({ icon }: { icon: string }) {
   );
 }
 
-export default function ServicesPage() {
-  const services = getServices();
-  const settings = getSettings();
+const FALLBACK_PROCESS_STEPS_AR = [
+  { step: "٠١", title: "الاستشارة", description: "نبدأ باستشارة معمّقة لفهم رؤيتك وأسلوب حياتك ومتطلباتك." },
+  { step: "٠٢", title: "تطوير المفهوم", description: "يبتكر مصممونا مفهوماً شاملاً يتضمن لوحات الإلهام والتخطيطات واختيار المواد." },
+  { step: "٠٣", title: "التصميم والتفاصيل", description: "يتم صقل كل عنصر بالرسومات الفنية والتصورات ثلاثية الأبعاد والمواصفات التفصيلية." },
+  { step: "٠٤", title: "التنفيذ", description: "فريقنا يدير عملية البناء بالكامل، لضمان تنفيذ التصميم بأعلى المعايير." },
+];
 
-  const heroLabel = settings.servicesPageLabel || "ماذا نقدم";
-  const heroTitle = settings.servicesPageTitle || "خدماتنا";
-  const heroDesc = settings.servicesPageDescription || "من الفكرة الأولى إلى التنفيذ النهائي، نقدم حلول تصميم شاملة مصممة خصيصاً لرؤيتك الفريدة.";
-  const buttonText = settings.servicesPageButtonText || "اطلب الخدمة";
-  const processLabel = settings.processLabel || "كيف نعمل";
-  const processTitle = settings.processTitle || "مراحل العمل";
-  const processDesc = settings.processDescription || "رحلة سلسة من فكرتك الأولى إلى مساحة متكاملة.";
-  const steps = settings.processSteps?.length ? settings.processSteps : [
-    { step: "٠١", title: "الاستشارة", description: "نبدأ باستشارة معمّقة لفهم رؤيتك وأسلوب حياتك ومتطلباتك." },
-    { step: "٠٢", title: "تطوير المفهوم", description: "يبتكر مصممونا مفهوماً شاملاً يتضمن لوحات الإلهام والتخطيطات واختيار المواد." },
-    { step: "٠٣", title: "التصميم والتفاصيل", description: "يتم صقل كل عنصر بالرسومات الفنية والتصورات ثلاثية الأبعاد والمواصفات التفصيلية." },
-    { step: "٠٤", title: "التنفيذ", description: "فريقنا يدير عملية البناء بالكامل، لضمان تنفيذ التصميم بأعلى المعايير." },
-  ];
+const FALLBACK_PROCESS_STEPS_EN = [
+  { step: "01", title: "Consultation", description: "We begin with an in-depth consultation to understand your vision, lifestyle, and requirements." },
+  { step: "02", title: "Concept development", description: "Our designers develop a full concept including mood boards, layouts, and material selection." },
+  { step: "03", title: "Design & detailing", description: "Every element is refined with technical drawings, 3D visualizations, and detailed specifications." },
+  { step: "04", title: "Execution", description: "Our team manages the build end-to-end to deliver the design to the highest standards." },
+];
+
+export default async function ServicesPage() {
+  const locale = await getSiteLocale();
+  const dict = getDict(locale);
+  const settings = getLocalizedSettings(getSettings(), locale);
+  const services = getLocalizedServices(getServices(), locale);
+
+  const heroLabel = settings.servicesPageLabel?.trim() || t(dict, "servicesPage.defaultLabel");
+  const heroTitle = settings.servicesPageTitle?.trim() || t(dict, "servicesPage.defaultTitle");
+  const heroDesc = settings.servicesPageDescription?.trim() || t(dict, "servicesPage.defaultDescription");
+  const buttonText = settings.servicesPageButtonText?.trim() || t(dict, "servicesPage.defaultButton");
+  const processLabel = settings.processLabel?.trim() || t(dict, "servicesPage.defaultProcessLabel");
+  const processTitle = settings.processTitle?.trim() || t(dict, "servicesPage.defaultProcessTitle");
+  const processDesc = settings.processDescription?.trim() || t(dict, "servicesPage.defaultProcessDescription");
+  const steps =
+    settings.processSteps?.length
+      ? settings.processSteps
+      : locale === "en"
+        ? FALLBACK_PROCESS_STEPS_EN
+        : FALLBACK_PROCESS_STEPS_AR;
 
   const sc = settings.servicesColors || { heroBg: "#2C2C2C", heroText: "#FFFFFF", cardBg: "#FFFFFF", cardText: "#2C2C2C", processBg: "#FFFFFF" };
 

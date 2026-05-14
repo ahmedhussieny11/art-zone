@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "./ui/SectionHeading";
+import { useSiteLocale } from "@/components/SiteProviders";
 import { sampleTestimonials } from "@/lib/sample-data";
 
 interface Testimonial {
@@ -28,6 +29,7 @@ export default function TestimonialsSection({
   labelSize,
   titleSize,
 }: TestimonialsSectionProps) {
+  const { t } = useSiteLocale();
   const items = testimonials || sampleTestimonials;
   const [current, setCurrent] = useState(0);
 
@@ -36,7 +38,7 @@ export default function TestimonialsSection({
     setCurrent((prev) => (prev - 1 + items.length) % items.length);
 
   return (
-    <section className="bg-charcoal py-24 md:py-32">
+    <section className="bg-charcoal py-24 md:py-32 dark:bg-zinc-950">
       <div className="mx-auto max-w-4xl px-6 text-center lg:px-12">
         <SectionHeading
           label={label}
@@ -86,7 +88,7 @@ export default function TestimonialsSection({
             <button
               onClick={next}
               className="flex h-11 w-11 items-center justify-center border border-white/15 text-white/60 transition-all hover:border-gold hover:text-gold"
-              aria-label="الشهادة التالية"
+              aria-label={t("testimonials.next")}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
@@ -103,7 +105,7 @@ export default function TestimonialsSection({
                       ? "w-10 bg-gold"
                       : "w-2 bg-white/20 hover:bg-white/40"
                   }`}
-                  aria-label={`الانتقال للشهادة ${i + 1}`}
+                  aria-label={t("testimonials.goTo", { n: String(i + 1) })}
                 />
               ))}
             </div>
@@ -111,7 +113,7 @@ export default function TestimonialsSection({
             <button
               onClick={prev}
               className="flex h-11 w-11 items-center justify-center border border-white/15 text-white/60 transition-all hover:border-gold hover:text-gold"
-              aria-label="الشهادة السابقة"
+              aria-label={t("testimonials.prev")}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />

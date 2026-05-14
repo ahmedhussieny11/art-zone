@@ -1,0 +1,199 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "portfolio": "أعمالنا",
+    "services": "خدماتنا",
+    "blog": "المدونة",
+    "contact": "تواصل معنا",
+    "menuAria": "القائمة",
+    "langArabic": "عربي",
+    "langEnglish": "English",
+    "themeLight": "الوضع الفاتح",
+    "themeDark": "الوضع الداكن",
+    "headerCtaDefault": "احصل على عرض سعر"
+  },
+  "footer": {
+    "quickLinks": "روابط سريعة",
+    "contactUs": "تواصل معنا",
+    "whatsappPrefix": "واتساب:"
+  },
+  "portfolio": {
+    "metaTitle": "أعمالنا",
+    "metaDescription": "استكشف معرض أعمالنا في التصميم الداخلي الفاخر الذي يشمل الأنماط السكنية والتجارية والكلاسيكية والعصرية.",
+    "label": "أعمالنا",
+    "title": "معرض المشاريع",
+    "description": "كل مشروع هو قصة فريدة من الإبداع والحرفية والتعاون.",
+    "emptyCategory": "لا توجد مشاريع في هذه الفئة."
+  },
+  "portfolioFilter": {
+    "all": "الكل"
+  },
+  "categories": {
+    "residential": "سكني",
+    "commercial": "تجاري",
+    "classic": "كلاسيكي",
+    "modern": "عصري"
+  },
+  "blog": {
+    "metaTitle": "المدونة",
+    "metaDescription": "مقالات ونصائح في التصميم الداخلي والديكور من خبراء آرت زون. اكتشف أحدث الاتجاهات وأفضل النصائح لتصميم مساحتك.",
+    "metaOgTitle": "مدونة آرت زون للتصميم",
+    "metaOgDescription": "مقالات ونصائح في التصميم الداخلي والديكور من خبراء آرت زون.",
+    "label": "المدونة",
+    "titleWithCategory": "مقالات: {{cat}}",
+    "titleWithTag": "وسم: {{tag}}",
+    "titleDefault": "مقالات ونصائح",
+    "description": "أحدث المقالات والنصائح في عالم التصميم الداخلي والديكور من خبراء آرت زون.",
+    "all": "الكل",
+    "readMore": "اقرأ المزيد",
+    "emptyPublish": "لا توجد مقالات منشورة حالياً",
+    "emptyCategory": "لا توجد مقالات في تصنيف \"{{cat}}\"",
+    "emptyTag": "لا توجد مقالات بوسم \"{{tag}}\"",
+    "viewAll": "عرض جميع المقالات",
+    "metaKeywords": [
+      "مدونة تصميم داخلي",
+      "نصائح ديكور",
+      "اتجاهات التصميم",
+      "مقالات تصميم"
+    ]
+  },
+  "contact": {
+    "metaTitle": "تواصل معنا",
+    "metaDescription": "تواصل مع آرت زون للتصميم لمشروع التصميم الداخلي الفاخر الخاص بك. احجز استشارة مجانية اليوم.",
+    "pageTitleDefault": "اتصل بنا",
+    "pageSubtitleDefault": "يسعدنا سماع تفاصيل مشروعك. تواصل معنا ولنبتكر شيئاً استثنائياً معاً.",
+    "sectionLabel": "تواصل معنا",
+    "mapTitle": "موقعنا على الخريطة",
+    "mapMissing": "أضف رابط خريطة جوجل من الإعدادات"
+  },
+  "contactForm": {
+    "thanksTitle": "شكراً لك!",
+    "thanksBody": "تم استلام رسالتك وسنتواصل معك في أقرب وقت.",
+    "sendAnother": "إرسال رسالة أخرى",
+    "fullName": "الاسم الكامل *",
+    "fullNamePlaceholder": "اسمك الكامل",
+    "phone": "رقم الجوال *",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "your@email.com",
+    "service": "نوع الخدمة *",
+    "servicePlaceholder": "اختر الخدمة",
+    "budget": "نطاق الميزانية",
+    "budgetPlaceholder": "اختر نطاق الميزانية",
+    "message": "تفاصيل المشروع *",
+    "messagePlaceholder": "أخبرنا عن مشروعك، المساحة، وأي متطلبات خاصة...",
+    "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل معنا عبر واتساب.",
+    "submit": "إرسال الرسالة",
+    "submitting": "جاري الإرسال...",
+    "requestConsultation": "طلب استشارة",
+    "requestSubtitle": "املأ النموذج أدناه وسيتواصل فريقنا معك خلال 24 ساعة."
+  },
+  "steps": {
+    "goToStep": "انتقل إلى الخطوة {{n}}: {{title}}",
+    "stepDot": "الخطوة {{n}}"
+  },
+  "hero": {
+    "statsProjects": "مشروع مكتمل",
+    "statsYears": "سنوات خبرة",
+    "statsSatisfaction": "رضا العملاء",
+    "scrollDown": "انزل للأسفل",
+    "defaultKeywordsCsv": "تصميم داخلي|فاخر|إبداعي|عصري|أنيق|مميّز|احترافي|راقي"
+  },
+  "featured": {
+    "viewAll": "عرض جميع المشاريع"
+  },
+  "cta": {
+    "freeConsultation": "احجز استشارة مجانية",
+    "fallbackTitle": "هل لديك مشروع في ذهنك؟",
+    "fallbackDescription": "دعنا نحول رؤيتك إلى واقع. تواصل معنا اليوم لبدء رحلة التصميم.",
+    "fallbackWhatsapp": "تواصل معنا عبر واتساب"
+  },
+  "testimonials": {
+    "next": "الشهادة التالية",
+    "prev": "الشهادة السابقة",
+    "goTo": "الانتقال للشهادة {{n}}"
+  },
+  "whatsapp": {
+    "aria": "تواصل عبر واتساب"
+  },
+  "videoScroll": {
+    "preparing": "جارٍ تحضير الفيديو…",
+    "skip": "تخطي",
+    "skipSection": "تخطي القسم"
+  },
+  "brandSlider": {
+    "defaultAria": "معرض أعمال التصميم",
+    "prev": "الشريحة السابقة",
+    "next": "الشريحة التالية",
+    "goToSlide": "الشريحة {{n}}"
+  },
+  "zoom": {
+    "aria": "بوابة التصميم"
+  },
+  "portfolioProject": {
+    "back": "العودة لمعرض المشاريع",
+    "concept": "الفكرة",
+    "beforeAfter": "قبل وبعد",
+    "gallery": "معرض الصور",
+    "galleryEmpty": "لا توجد صور في المعرض بعد.",
+    "materials": "المواد المستخدمة",
+    "related": "مشاريع ذات صلة",
+    "metaDescription": "{{title}} — مشروع تصميم داخلي ({{cat}}) من آرت زون للتصميم."
+  },
+  "blogArticle": {
+    "breadcrumbHome": "الرئيسية",
+    "breadcrumbBlog": "المدونة",
+    "share": "شارك المقال:",
+    "shareTwitter": "مشاركة على تويتر",
+    "shareFacebook": "مشاركة على فيسبوك",
+    "shareWhatsapp": "مشاركة عبر واتساب",
+    "related": "مقالات ذات صلة"
+  },
+  "instagram": {
+    "followUs": "تابعنا",
+    "followInstagram": "تابعنا على انستغرام",
+    "instagram": "انستغرام",
+    "facebook": "فيسبوك",
+    "twitter": "X (تويتر)",
+    "tiktok": "تيك توك",
+    "youtube": "يوتيوب",
+    "snapchat": "سناب شات",
+    "linkedin": "لينكد إن"
+  },
+  "beforeAfter": {
+    "before": "قبل",
+    "after": "بعد",
+    "sliderAria": "مقارنة قبل وبعد"
+  },
+  "gallery": {
+    "zoom": "تكبير",
+    "close": "إغلاق",
+    "prev": "السابق",
+    "next": "التالي",
+    "lightboxAria": "معرض الصور",
+    "imageAlt": "{{title}} - صورة {{n}}",
+    "coverZoom": "تكبير صورة الغلاف",
+    "coverAlt": "صورة الغلاف"
+  },
+  "socialGallery": {
+    "imageAlt": "معرض {{n}}"
+  },
+  "servicesPage": {
+    "metaTitle": "خدماتنا",
+    "metaDescription": "آرت زون للتصميم تقدم خدمات التصميم الداخلي الفاخر والتشطيبات الاحترافية والإشراف المتخصص للمساحات السكنية والتجارية.",
+    "defaultLabel": "ماذا نقدم",
+    "defaultTitle": "خدماتنا",
+    "defaultDescription": "من الفكرة الأولى إلى التنفيذ النهائي، نقدم حلول تصميم شاملة مصممة خصيصاً لرؤيتك الفريدة.",
+    "defaultButton": "اطلب الخدمة",
+    "defaultProcessLabel": "كيف نعمل",
+    "defaultProcessTitle": "مراحل العمل",
+    "defaultProcessDescription": "رحلة سلسة من فكرتك الأولى إلى مساحة متكاملة."
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "body": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "home": "العودة للرئيسية"
+  },
+  "loading": {
+    "text": "جاري التحميل..."
+  }
+}
