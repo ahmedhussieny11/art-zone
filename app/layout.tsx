@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
 import { getSettings, getPublicSiteUrl } from "@/lib/data";
-import { absoluteMediaUrl, normalizeMediaPath } from "@/lib/media-url";
+import { getSiteTabIconUrl } from "@/lib/site-icon";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -23,18 +23,10 @@ const cairo = Cairo({
 export async function generateMetadata(): Promise<Metadata> {
   const s = getSettings();
   const base = getPublicSiteUrl();
-  /** أيقونة التبويب: Favicon من الإعدادات، أو الشعار إن لم تُرفع أيقونة منفصلة */
-  const favSource =
-    (s.siteFavicon && s.siteFavicon.trim()) ||
-    (s.logo && s.logo.trim()) ||
-    "";
+  const iconUrl = getSiteTabIconUrl();
 
   let icons: Metadata["icons"] | undefined;
-  if (favSource) {
-    const pathNorm = normalizeMediaPath(favSource);
-    const iconUrl = pathNorm.startsWith("http")
-      ? pathNorm
-      : absoluteMediaUrl(base, pathNorm) ?? new URL(pathNorm, `${base.replace(/\/$/, "")}/`).href;
+  if (iconUrl) {
     const isIco = /\.ico($|\?)/i.test(iconUrl);
     const isPng = /\.png($|\?)/i.test(iconUrl);
     const isJpeg = /\.(jpe?g)($|\?)/i.test(iconUrl);

@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /** طلب /favicon.ico الافتراضي من المتصفح → صورة من الإعدادات (بدل أيقونة Next/Vercel الافتراضية). */
+  async rewrites() {
+    return [{ source: "/favicon.ico", destination: "/api/favicon" }];
+  },
   images: {
     formats: ["image/webp"],
     remotePatterns: [
