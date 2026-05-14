@@ -3,6 +3,8 @@ import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
 import { getSettings, getPublicSiteUrl } from "@/lib/data";
 import { normalizeMediaPath } from "@/lib/media-url";
+import fs from "fs";
+import path from "path";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -20,14 +22,15 @@ const cairo = Cairo({
   display: "swap",
 });
 
-/** المسار النسبي للأيقونة (للـ <link> المباشر في <head>) */
-function getIconRelativePath(): string | null {
+/** مسار أيقونة التبويب:
+ *  - /favicon.png لو الملف موجود (يُنسخ عند حفظ الإعدادات)
+ *  - وإلا المسار المحفوظ في الإعدادات مباشرةً (Blob URL أو uploads) */
+function getIconPath(): string | null {
+  const staticFavicon = path.join(process.cwd(), "public", "favicon.png");
+  if (fs.existsSync(staticFavicon)) return "/favicon.png";
   const s = getSettings();
   const raw = (s.siteFavicon && s.siteFavicon.trim()) || (s.logo && s.logo.trim()) || "";
-  if (!raw) return null;
-  const p = normalizeMediaPath(raw);
-  // إذا كان مسار نسبي (uploads) نرجعه مباشرة؛ روابط https نرجعها كما هي
-  return p || null;
+  return raw ? normalizeMediaPath(raw) : null;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -64,7 +67,7 @@ export default function RootLayout({
   const settings = getSettings();
   const c = settings.colors || DEFAULT_COLORS;
   const scale = Math.max(80, Math.min(150, Number(settings.fontScale) || 100));
-  const iconPath = getIconRelativePath();
+  const iconPath = getIconPath();
 
   const themeCSS = `
     :root, *, *::before, *::after {
