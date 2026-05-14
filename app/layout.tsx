@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Amiri, Cairo } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
 import { getSettings, getPublicSiteUrl } from "@/lib/data";
+import { absoluteMediaUrl, normalizeMediaPath } from "@/lib/media-url";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,37 @@ const cairo = Cairo({
 export async function generateMetadata(): Promise<Metadata> {
   const s = getSettings();
   const base = getPublicSiteUrl();
-  const iconHref = (s.siteFavicon && s.siteFavicon.trim()) || "/favicon.ico";
+  /** أيقونة التبويب: Favicon من الإعدادات، أو الشعار إن لم تُرفع أيقونة منفصلة */
+  const favSource =
+    (s.siteFavicon && s.siteFavicon.trim()) ||
+    (s.logo && s.logo.trim()) ||
+    "";
+
+  let icons: Metadata["icons"] | undefined;
+  if (favSource) {
+    const pathNorm = normalizeMediaPath(favSource);
+    const iconUrl = pathNorm.startsWith("http")
+      ? pathNorm
+      : absoluteMediaUrl(base, pathNorm) ?? new URL(pathNorm, `${base.replace(/\/$/, "")}/`).href;
+    const isIco = /\.ico($|\?)/i.test(iconUrl);
+    const isPng = /\.png($|\?)/i.test(iconUrl);
+    const isJpeg = /\.(jpe?g)($|\?)/i.test(iconUrl);
+    const isWebp = /\.webp($|\?)/i.test(iconUrl);
+    const type = isIco
+      ? "image/x-icon"
+      : isPng
+        ? "image/png"
+        : isJpeg
+          ? "image/jpeg"
+          : isWebp
+            ? "image/webp"
+            : undefined;
+    icons = {
+      icon: type ? [{ url: iconUrl, type }] : [{ url: iconUrl }],
+      apple: [{ url: iconUrl }],
+    };
+  }
+
   const defaultTitle = (s.siteDefaultTitle && s.siteDefaultTitle.trim()) || s.siteName;
   let template = (s.siteTitleTemplate && s.siteTitleTemplate.trim()) || `%s | ${s.siteName}`;
   if (!template.includes("%s")) {
@@ -38,10 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: s.siteDescription,
     ...(keywords ? { keywords } : {}),
-    icons: {
-      icon: [{ url: iconHref }],
-      apple: [{ url: iconHref }],
-    },
+    ...(icons ? { icons } : {}),
     openGraph: {
       type: "website",
       locale: "ar_SA",
@@ -86,10 +114,12 @@ export default function RootLayout({
       dir="rtl"
       className={`${amiri.variable} ${cairo.variable} antialiased`}
     >
-      <head>
-        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
-      </head>
+      {/*
+        لا تضع <head> فارغاً/جزئياً هنا: في App Router قد يتعارض مع حقن Metadata (مثل rel="icon")
+        ويمنع ظهور أيقونة التبويب. الأنماط العامة تُوضع في بداية body.
+      */}
       <body className="min-h-screen flex flex-col">
+        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

@@ -73,7 +73,7 @@ export default function SettingsPage() {
         {/* Logo & Brand */}
         <Section icon={<IconPaint />} title="الهوية والشعار" color="bg-gold/10 text-gold">
           <SingleImageUploader label="شعار الموقع (Logo)" value={logo} onChange={setLogo} />
-          <p className="text-xs text-warmgray">لو مفيش شعار، هيظهر اسم الموقع كنص بدلاً منه</p>
+          <p className="text-xs text-warmgray">لو مفيش شعار، هيظهر اسم الموقع كنص بدلاً منه. أيقونة التبويب تُؤخذ من قسم «تبويب المتصفح ومحركات البحث» أدناه؛ وإذا لم تُرفع هناك فسيُستخدم هذا الشعار في التبويب.</p>
           <Field label="اسم الموقع (يظهر في الهيدر والميتا)" name="siteName" defaultValue={settings.siteName} />
           <div>
             <label className="mb-2 block text-xs font-medium text-charcoal">وصف الموقع (نص تعريفي — يُستخدم في الميتا والفوتر)</label>
