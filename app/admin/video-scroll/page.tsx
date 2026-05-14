@@ -238,7 +238,7 @@ export default function VideoScrollAdminPage() {
               </span>
             </div>
             <p className="mt-1 text-[10px] text-warmgray">
-              أصغر = حركة أسرع. أكبر = حركة أبطأ وأكثر فخامة. (الموصى به: 5–7)
+              أصغر = حركة أسرع. أكبر = حركة أبطأ وأخف على الجهاز. (الموصى به: 7–9)
             </p>
           </div>
 
@@ -261,7 +261,7 @@ export default function VideoScrollAdminPage() {
               </span>
             </div>
             <p className="mt-1 text-[10px] text-warmgray">
-              أصغر = استجابة فورية. أكبر = حركة ناعمة بتأخير. (الموصى به: 0.1–0.25 للسلاسة)
+              أصغر = استجابة فورية. أكبر = حركة ناعمة بتأخير. (الموصى به: 0.05–0.18 للسلاسة)
             </p>
           </div>
 

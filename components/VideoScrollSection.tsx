@@ -6,6 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { VideoScrollConfig } from "@/lib/video-scroll-config";
 
 const HTML_SCRUB_CLASS = "video-scroll-scrub";
+/** استعادة إعداد GSAP الافتراضي للـ ticker بعد مغادرة القسم */
+const TICKER_LAG_DEFAULT = () => gsap.ticker.lagSmoothing(500, 33);
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -40,7 +42,10 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
 
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const bufferBarRef = useRef<HTMLDivElement>(null);
+  const bufferLabelRef = useRef<HTMLSpanElement>(null);
   const [isReady, setIsReady] = useState(false);
+  /** نحدّث النسبة بدون React في الغالب — يمنع مئات الـ re-render أثناء التحميل/السكروب */
   const [bufferedPct, setBufferedPct] = useState(0);
 
   useEffect(() => {
@@ -51,6 +56,17 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     setIsReady(false);
     setBufferedPct(0);
 
+    let lastUiPct = -1;
+    let lastUiAt = 0;
+
+    const paintBufferUi = (pct: number) => {
+      const p = Math.min(1, Math.max(0, pct));
+      const bar = bufferBarRef.current;
+      const lab = bufferLabelRef.current;
+      if (bar) bar.style.width = `${Math.max(8, Math.round(p * 100))}%`;
+      if (lab) lab.textContent = `${Math.round(p * 100)}%`;
+    };
+
     const updateBuffered = () => {
       if (cancelled) return;
       const duration = video.duration;
@@ -59,7 +75,20 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       for (let i = 0; i < video.buffered.length; i++) {
         end = Math.max(end, video.buffered.end(i));
       }
-      setBufferedPct(Math.min(1, end / duration));
+      const pct = Math.min(1, end / duration);
+      const now = performance.now();
+      /* تحديث React فقط عند تغيّر ≥3% أو كل 350ms — يخفّف اللاج من الـ progress */
+      if (
+        Math.abs(pct - lastUiPct) >= 0.03 ||
+        now - lastUiAt > 350 ||
+        pct >= 0.999
+      ) {
+        lastUiPct = pct;
+        lastUiAt = now;
+        setBufferedPct(pct);
+      } else {
+        paintBufferUi(pct);
+      }
     };
 
     const markReady = () => {
@@ -102,10 +131,6 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     };
   }, [videoSrc]);
 
-  /* ── ScrollTrigger يحدّث التقدم مباشرة (بدون tween وسيط) + rAF لدمج seeks
-     في إطار رسم واحد. fastScrollEnd يقلّل التقطيع عند توقف السكروب فجأة.
-     أثناء التفعيل: html.video-scroll-scrub يعطّل scroll-behavior: smooth على
-     الجذر حتى لا يتعارض مع قياس السكروب. ── */
   useEffect(() => {
     if (!isReady) return;
     const section = sectionRef.current;
@@ -114,9 +139,15 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
 
     const latest = { p: 0 };
     let rafId = 0;
+    let lastApplied = -1;
 
     const setHtmlScrub = (on: boolean) => {
       document.documentElement.classList.toggle(HTML_SCRUB_CLASS, on);
+    };
+
+    /* أثناء السكروب على الفيديو: تعطيل lag smoothing في الـ ticker حتى لا يقفز الوقت ويثقل الشعور */
+    const enableScrollSyncMode = () => {
+      gsap.ticker.lagSmoothing(0, 16);
     };
 
     const flushSeek = () => {
@@ -124,6 +155,9 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       const d = video.duration;
       if (!Number.isFinite(d) || d <= 0) return;
       const next = Math.max(0, Math.min(d, latest.p * d));
+      /* تجاهل seeks أقل من ~12ms عن آخر تطبيق — يقلّل ضغط الـ decoder بدون ما يبان تقطيع */
+      if (lastApplied >= 0 && Math.abs(next - lastApplied) < 1 / 80) return;
+      lastApplied = next;
       try {
         video.currentTime = next;
       } catch {
@@ -141,16 +175,28 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       start: "top top",
       end: "bottom bottom",
       scrub,
-      fastScrollEnd: true,
+      fastScrollEnd: 0.35,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         latest.p = self.progress;
         queueSeek();
       },
-      onEnter: () => setHtmlScrub(true),
-      onLeave: () => setHtmlScrub(false),
-      onEnterBack: () => setHtmlScrub(true),
-      onLeaveBack: () => setHtmlScrub(false),
+      onEnter: () => {
+        setHtmlScrub(true);
+        enableScrollSyncMode();
+      },
+      onLeave: () => {
+        setHtmlScrub(false);
+        TICKER_LAG_DEFAULT();
+      },
+      onEnterBack: () => {
+        setHtmlScrub(true);
+        enableScrollSyncMode();
+      },
+      onLeaveBack: () => {
+        setHtmlScrub(false);
+        TICKER_LAG_DEFAULT();
+      },
     });
 
     const refresh = () => ScrollTrigger.refresh();
@@ -161,6 +207,7 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       if (rafId) cancelAnimationFrame(rafId);
       trigger.kill();
       setHtmlScrub(false);
+      TICKER_LAG_DEFAULT();
     };
   }, [isReady, scrub, scrollMultiplier]);
 
@@ -189,7 +236,10 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     >
       <div
         className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden"
-        style={{ backgroundColor: bgColor }}
+        style={{
+          backgroundColor: bgColor,
+          contain: "paint",
+        }}
       >
         <video
           ref={videoRef}
@@ -222,7 +272,8 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           >
             <div className="h-1 w-48 overflow-hidden rounded-full bg-white/15">
               <div
-                className="h-full transition-[width] duration-200 ease-out"
+                ref={bufferBarRef}
+                className="h-full"
                 style={{
                   width: `${Math.max(8, Math.round(bufferedPct * 100))}%`,
                   backgroundColor: accentColor,
@@ -244,7 +295,7 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
               className="inline-block h-1.5 w-1.5 rounded-full opacity-80"
               style={{ backgroundColor: accentColor }}
             />
-            {Math.round(bufferedPct * 100)}%
+            <span ref={bufferLabelRef}>{Math.round(bufferedPct * 100)}%</span>
           </div>
         )}
 
