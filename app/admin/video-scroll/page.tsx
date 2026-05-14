@@ -108,7 +108,9 @@ export default function VideoScrollAdminPage() {
             label="ملف الفيديو"
             value={cfg.videoSrc}
             onChange={(v) => set("videoSrc", v)}
-            hint='يُفضّل MP4 معاد ترميزه بكل إطار keyframe (g=1) لسلاسة السكروب. الأمثل ≤ 30 MB.'
+            uploadEndpoint="/api/admin/upload-video-scroll"
+            fieldName="file"
+            hint='ارفع أي فيديو (MP4 / MOV / WhatsApp …) — السيرفر يحوّله تلقائياً لـ H.264 بكل إطار keyframe لسلاسة كاملة. تحويل ~10 ثواني لكل دقيقة فيديو.'
           />
 
           <Input

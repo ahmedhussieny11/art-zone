@@ -50,8 +50,9 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
   const [isReady, setIsReady] = useState(false);
   const [bufferedPct, setBufferedPct] = useState(0);
 
-  /* ── Force a full buffer download before binding the scroll
-     (a partial buffer causes the "jumpy / image-like" feel on scrub) ── */
+  /* ── Start scrubbing as soon as we have the first frame decoded.
+     We don't wait for the whole video to buffer — with `+faststart` MP4
+     and HTTP range requests, the browser can seek anywhere on demand. ── */
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -60,30 +61,41 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     setIsReady(false);
     setBufferedPct(0);
 
-    const updateBufferedAndMaybeReady = () => {
+    const updateBuffered = () => {
       if (cancelled) return;
       const duration = video.duration;
       if (!Number.isFinite(duration) || duration <= 0) return;
-
       let end = 0;
       for (let i = 0; i < video.buffered.length; i++) {
         end = Math.max(end, video.buffered.end(i));
       }
-      const pct = Math.min(1, end / duration);
-      setBufferedPct(pct);
-
-      if (video.readyState >= 4 && pct >= 0.95) {
-        setIsReady(true);
-      }
+      setBufferedPct(Math.min(1, end / duration));
     };
 
-    const onProgress = () => updateBufferedAndMaybeReady();
-    const onCanPlayThrough = () => updateBufferedAndMaybeReady();
-    const onLoadedMeta = () => updateBufferedAndMaybeReady();
+    const markReady = () => {
+      if (cancelled) return;
+      const duration = video.duration;
+      if (!Number.isFinite(duration) || duration <= 0) return;
+      /* readyState 2 = HAVE_CURRENT_DATA (first frame decoded). 
+         That's enough to start scrubbing. */
+      if (video.readyState >= 2) setIsReady(true);
+    };
+
+    const onProgress = () => updateBuffered();
+    const onLoadedData = () => {
+      updateBuffered();
+      markReady();
+    };
+    const onLoadedMeta = () => {
+      updateBuffered();
+      markReady();
+    };
+    const onCanPlay = () => markReady();
 
     video.addEventListener("progress", onProgress);
-    video.addEventListener("canplaythrough", onCanPlayThrough);
+    video.addEventListener("loadeddata", onLoadedData);
     video.addEventListener("loadedmetadata", onLoadedMeta);
+    video.addEventListener("canplay", onCanPlay);
 
     /* Kickstart buffering. Some browsers (Safari) require an explicit
        `play()` then `pause()` to actually start downloading. */
@@ -95,11 +107,15 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
       });
     }
 
+    /* Safety: if metadata is already there, fire ready check immediately */
+    if (video.readyState >= 2) markReady();
+
     return () => {
       cancelled = true;
       video.removeEventListener("progress", onProgress);
-      video.removeEventListener("canplaythrough", onCanPlayThrough);
+      video.removeEventListener("loadeddata", onLoadedData);
       video.removeEventListener("loadedmetadata", onLoadedMeta);
+      video.removeEventListener("canplay", onCanPlay);
     };
   }, [videoSrc]);
 
@@ -222,17 +238,18 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           />
         )}
 
-        {/* Buffering overlay until the video is ready for smooth scrub */}
+        {/* Buffering overlay — disappears as soon as the first frame is decoded.
+            After that, a tiny progress bar in the corner shows continued buffering. */}
         {!isReady && (
           <div
             className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-sm"
-            style={{ backgroundColor: `${bgColor}99` }}
+            style={{ backgroundColor: `${bgColor}E6` }}
           >
             <div className="h-1 w-48 overflow-hidden rounded-full bg-white/15">
               <div
                 className="h-full transition-[width] duration-200 ease-out"
                 style={{
-                  width: `${Math.round(bufferedPct * 100)}%`,
+                  width: `${Math.max(8, Math.round(bufferedPct * 100))}%`,
                   backgroundColor: accentColor,
                 }}
               />
@@ -241,8 +258,19 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
               className="mt-3 text-[10px] tracking-[0.3em] text-white/50"
               style={{ direction: "rtl" }}
             >
-              جارٍ تحميل التجربة… {Math.round(bufferedPct * 100)}%
+              جارٍ تحضير الفيديو…
             </span>
+          </div>
+        )}
+
+        {/* Tiny live buffer indicator while video continues to download */}
+        {isReady && bufferedPct < 0.999 && (
+          <div className="pointer-events-none absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-[9px] tracking-wider text-white/70 backdrop-blur-sm">
+            <span
+              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+              style={{ backgroundColor: accentColor }}
+            />
+            {Math.round(bufferedPct * 100)}%
           </div>
         )}
 

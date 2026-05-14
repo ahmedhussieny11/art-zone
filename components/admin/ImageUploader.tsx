@@ -17,6 +17,10 @@ interface FileUploaderProps {
   accept?: string;
   /** Optional human-readable hint, e.g. "MP4 / WebM — 50 MB كحد أقصى" */
   hint?: string;
+  /** Override the upload endpoint. Default: /api/admin/upload */
+  uploadEndpoint?: string;
+  /** Field name to use in the multipart body. Default: "files" */
+  fieldName?: string;
 }
 
 export function VideoUploader({
@@ -25,9 +29,13 @@ export function VideoUploader({
   onChange,
   accept = "video/*",
   hint,
+  uploadEndpoint = "/api/admin/upload",
+  fieldName = "files",
 }: FileUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [statusLabel, setStatusLabel] = useState<string>("");
+  const [warning, setWarning] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -35,31 +43,46 @@ export function VideoUploader({
     if (!file) return;
     setUploading(true);
     setProgress(0);
+    setStatusLabel("جاري الرفع…");
+    setWarning(null);
 
     const fd = new FormData();
-    fd.append("files", file);
+    fd.append(fieldName, file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/admin/upload");
+    xhr.open("POST", uploadEndpoint);
     xhr.upload.onprogress = (ev) => {
       if (ev.lengthComputable) {
-        setProgress(Math.round((ev.loaded / ev.total) * 100));
+        const pct = Math.round((ev.loaded / ev.total) * 100);
+        setProgress(pct);
+        if (pct >= 100) setStatusLabel("جاري المعالجة…");
       }
     };
     xhr.onload = () => {
       try {
-        const data = JSON.parse(xhr.responseText) as { paths?: string[] };
-        if (data.paths?.[0]) onChange(data.paths[0]);
+        const data = JSON.parse(xhr.responseText) as {
+          path?: string;
+          paths?: string[];
+          warning?: string | null;
+          error?: string;
+        };
+        const url = data.path ?? data.paths?.[0];
+        if (url) onChange(url);
+        if (data.warning) setWarning(data.warning);
+        if (data.error) setWarning(data.error);
       } catch {
-        /* ignore */
+        setWarning("استجابة غير متوقعة من السيرفر");
       }
       setUploading(false);
       setProgress(0);
+      setStatusLabel("");
       if (inputRef.current) inputRef.current.value = "";
     };
     xhr.onerror = () => {
       setUploading(false);
       setProgress(0);
+      setStatusLabel("");
+      setWarning("فشل الاتصال بالسيرفر");
     };
     xhr.send(fd);
   }
@@ -109,17 +132,34 @@ export function VideoUploader({
             disabled={uploading}
             className="rounded-lg bg-gold px-4 py-2 text-xs font-medium text-white hover:bg-gold-dark disabled:opacity-50"
           >
-            {uploading ? `${progress}%` : "رفع فيديو"}
+            {uploading
+              ? statusLabel.includes("معالجة")
+                ? "جاري المعالجة…"
+                : `${progress}%`
+              : "رفع فيديو"}
           </button>
         </div>
 
         {uploading && (
-          <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200">
-            <div
-              className="h-full bg-gold transition-all"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="space-y-1">
+            <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200">
+              <div
+                className="h-full bg-gold transition-all"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-warmgray">
+              {statusLabel}
+              {statusLabel.includes("معالجة") &&
+                " — جاري إعادة الترميز للسلاسة (قد يأخذ بضع ثواني)"}
+            </p>
           </div>
+        )}
+
+        {warning && !uploading && (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-[11px] text-amber-700">
+            {warning}
+          </p>
         )}
 
         {hint && <p className="text-[10px] text-warmgray">{hint}</p>}
