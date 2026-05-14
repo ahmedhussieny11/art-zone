@@ -55,9 +55,9 @@ export const DEFAULT_VIDEO_SCROLL_CONFIG: VideoScrollConfig = {
   title: "اكتشف التفاصيل بحركة سلسة",
   description:
     "حرّك صفحتك للأسفل وشاهد كل لقطة تنبض بالحياة — كل بكسل مضبوط على إيقاع تمريرك.",
-  scrollHint: "↓ مرّر للأسفل",
+  scrollHint: "مرّر للأسفل",
   scrollMultiplier: 6,
-  scrub: 0.8,
+  scrub: 0.55,
   bgColor: "#2C2C2C",
   accentColor: "#C9A96E",
   vignetteOpacity: 0.55,

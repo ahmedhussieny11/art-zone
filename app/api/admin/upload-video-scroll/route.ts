@@ -20,7 +20,7 @@ function ensureUploadDir() {
  * Re-encode any input video into a format ideal for scroll-bound playback:
  *   - H.264 main profile  ➜ universal browser compatibility (fixes HEVC/AV1/etc.)
  *   - Every frame keyframe (g=1) ➜ instant seeking for smooth scrubbing
- *   - Scaled to 640px wide ➜ small file, fast load
+ *   - Scaled to max 540px wide ➜ decode أخف على الموبايل
  *   - No audio ➜ smaller, no autoplay restrictions
  *   - +faststart ➜ playback starts before download completes
  */
@@ -43,16 +43,18 @@ async function reencode(input: string, output: string): Promise<void> {
       "-y",
       "-i", input,
       "-an",
-      "-vf", "scale='min(640,iw)':-2",
+      "-vf", "scale='min(540,iw)':-2",
       "-c:v", "libx264",
       "-profile:v", "main",
       "-preset", "veryfast",
-      "-crf", "23",
+      "-tune", "zerolatency",
+      "-crf", "24",
       "-pix_fmt", "yuv420p",
       "-g", "1",
       "-keyint_min", "1",
       "-sc_threshold", "0",
-      "-x264-params", "no-scenecut=1",
+      "-bf", "0",
+      "-x264-params", "no-scenecut=1:bframes=0:ref=1",
       "-movflags", "+faststart",
       output,
     ];
