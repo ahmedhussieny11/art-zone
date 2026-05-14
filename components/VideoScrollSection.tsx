@@ -195,13 +195,13 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     };
   }, [isReady, scrub, scrollMultiplier]);
 
-  /* Smoothly scroll past the entire pinned section. */
+  /* Jump past the pinned section — instant = أقصى استجابة */
   const handleSkip = () => {
     const section = sectionRef.current;
     if (!section) return;
     const rect = section.getBoundingClientRect();
     const targetY = window.scrollY + rect.bottom + 4;
-    window.scrollTo({ top: targetY, behavior: "smooth" });
+    window.scrollTo({ top: targetY, behavior: "auto" });
   };
 
   if (!videoSrc) return null;
@@ -249,31 +249,6 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           />
         )}
 
-        {/* Skip button — top-left of viewport (mirrored for RTL feel) */}
-        {showSkip && (
-          <button
-            type="button"
-            onClick={handleSkip}
-            className="group absolute left-4 top-4 z-30 flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[11px] font-medium tracking-[0.18em] text-white/85 backdrop-blur-md transition-colors hover:bg-black/60 sm:left-6 sm:top-6"
-            style={{ direction: "rtl" }}
-            aria-label={skipText || "تخطي"}
-          >
-            <span>{skipText || "تخطي"}</span>
-            <svg
-              viewBox="0 0 24 24"
-              className="h-3.5 w-3.5 transition-transform group-hover:translate-y-0.5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M7 6l5 5 5-5" />
-              <path d="M7 13l5 5 5-5" opacity="0.6" />
-            </svg>
-          </button>
-        )}
-
         {/* Buffering overlay — disappears as soon as the first frame is decoded.
             After that, a tiny progress bar in the corner shows continued buffering. */}
         {!isReady && (
@@ -310,48 +285,117 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
           </div>
         )}
 
-        {/* Copy overlay */}
+        {/* Copy overlay — عمود واحد: الشارة → العنوان → الوصف → تلميح التمرير → زر التخطي */}
         {showOverlay && (
-          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-end pb-16 text-center md:justify-center md:pb-0">
-            {label && (
-              <span
-                className="mb-4 inline-block rounded-full px-5 py-2 text-xs font-semibold tracking-[0.2em] backdrop-blur-md"
-                style={{
-                  direction: "rtl",
-                  color: accentColor,
-                  backgroundColor: "rgba(0,0,0,0.40)",
-                  border: `1px solid ${accentColor}66`,
-                }}
-              >
-                {label}
-              </span>
-            )}
-            {title && (
-              <h2
-                className="max-w-3xl px-6 font-serif text-3xl font-light leading-tight text-white drop-shadow-lg sm:text-4xl md:text-5xl lg:text-6xl"
-                style={{ direction: "rtl" }}
-              >
-                {title}
-              </h2>
-            )}
-            {description && (
-              <p
-                className="mx-auto mt-5 max-w-xl px-6 text-sm leading-relaxed text-white/80 md:text-base"
-                style={{ direction: "rtl" }}
-              >
-                {description}
-              </p>
-            )}
+          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-5 pb-10 pt-20 text-center sm:px-8 sm:pb-12">
+            <div
+              className="flex max-w-2xl flex-col items-center"
+              style={{ direction: "rtl" }}
+            >
+              {label && (
+                <span
+                  className="mb-3 inline-block rounded-full px-5 py-2 text-xs font-semibold tracking-[0.2em] backdrop-blur-md sm:mb-4"
+                  style={{
+                    color: accentColor,
+                    backgroundColor: "rgba(0,0,0,0.45)",
+                    border: `1px solid ${accentColor}66`,
+                  }}
+                >
+                  {label}
+                </span>
+              )}
+              {title && (
+                <h2 className="max-w-3xl font-serif text-2xl font-light leading-snug text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl">
+                  {title}
+                </h2>
+              )}
+              {description && (
+                <p
+                  className={`mx-auto max-w-xl text-base font-medium leading-relaxed text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.8)] sm:text-lg ${
+                    title ? "mt-4" : "mt-1"
+                  }`}
+                >
+                  {description}
+                </p>
+              )}
+
+              {scrollHint && (
+                <div
+                  className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-white/25 bg-black/40 px-6 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-md sm:mt-7 sm:px-8 sm:py-4"
+                  role="status"
+                >
+                  <svg
+                    className="h-5 w-5 shrink-0 text-white/95 motion-safe:animate-bounce sm:h-6 sm:w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.2}
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                  </svg>
+                  <span className="text-sm font-bold tracking-wide text-white sm:text-base">
+                    {scrollHint}
+                  </span>
+                </div>
+              )}
+
+              {showSkip && (
+                <button
+                  type="button"
+                  onClick={handleSkip}
+                  className="pointer-events-auto mt-5 flex min-h-[48px] min-w-[140px] touch-manipulation items-center justify-center gap-2 rounded-full border-2 px-7 py-3 text-sm font-semibold tracking-wide text-white shadow-lg transition-transform active:scale-[0.97] sm:mt-6 sm:min-h-[52px] sm:text-base"
+                  style={{
+                    borderColor: `${accentColor}CC`,
+                    backgroundColor: "rgba(0,0,0,0.55)",
+                    boxShadow: `0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px ${accentColor}33 inset`,
+                  }}
+                  aria-label={skipText || "تخطي القسم والانتقال للأسفل"}
+                >
+                  <span>{skipText || "تخطي"}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5 shrink-0 opacity-90"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M12 5v14m0 0l-4-4m4 4l4-4" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Scroll hint */}
-        {showOverlay && scrollHint && (
-          <div
-            className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white/40"
-            style={{ direction: "rtl" }}
-          >
-            {scrollHint}
+        {/* زر التخطي لو النصوص مخفية — يظهر لوحده في المنتصف */}
+        {!showOverlay && showSkip && (
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="pointer-events-auto flex min-h-[48px] min-w-[140px] touch-manipulation items-center justify-center gap-2 rounded-full border-2 border-white/30 bg-black/50 px-7 py-3 text-sm font-semibold text-white shadow-lg active:scale-[0.97]"
+              style={{ direction: "rtl" }}
+              aria-label={skipText || "تخطي"}
+            >
+              <span>{skipText || "تخطي"}</span>
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path d="M12 5v14m0 0l-4-4m4 4l4-4" />
+              </svg>
+            </button>
           </div>
         )}
       </div>
