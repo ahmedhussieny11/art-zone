@@ -43,6 +43,8 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     accentColor,
     vignetteOpacity,
     showOverlay,
+    showSkip,
+    skipText,
   } = config;
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -193,6 +195,15 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
     };
   }, [isReady, scrub, scrollMultiplier]);
 
+  /* Smoothly scroll past the entire pinned section. */
+  const handleSkip = () => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    const targetY = window.scrollY + rect.bottom + 4;
+    window.scrollTo({ top: targetY, behavior: "smooth" });
+  };
+
   if (!videoSrc) return null;
 
   const vignetteBg = `radial-gradient(ellipse 80% 80% at 50% 50%, transparent 35%, rgba(0,0,0,${vignetteOpacity}) 100%)`;
@@ -236,6 +247,31 @@ export default function VideoScrollSection({ config }: VideoScrollSectionProps) 
             className="pointer-events-none absolute inset-0"
             style={{ background: vignetteBg }}
           />
+        )}
+
+        {/* Skip button — top-left of viewport (mirrored for RTL feel) */}
+        {showSkip && (
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="group absolute left-4 top-4 z-30 flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[11px] font-medium tracking-[0.18em] text-white/85 backdrop-blur-md transition-colors hover:bg-black/60 sm:left-6 sm:top-6"
+            style={{ direction: "rtl" }}
+            aria-label={skipText || "تخطي"}
+          >
+            <span>{skipText || "تخطي"}</span>
+            <svg
+              viewBox="0 0 24 24"
+              className="h-3.5 w-3.5 transition-transform group-hover:translate-y-0.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M7 6l5 5 5-5" />
+              <path d="M7 13l5 5 5-5" opacity="0.6" />
+            </svg>
+          </button>
         )}
 
         {/* Buffering overlay — disappears as soon as the first frame is decoded.

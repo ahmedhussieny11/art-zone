@@ -11,13 +11,19 @@ import CTABanner from "@/components/CTABanner";
 import LatestArticles from "@/components/LatestArticles";
 import { getProjects, getTestimonials, getSettings, getHomePageArticles, getBrandSliderConfig } from "@/lib/data";
 import { getZoomPortalConfig } from "@/lib/zoom-portal-data";
-import { getVideoScrollConfig } from "@/lib/video-scroll-data";
+import { getVideoScrollConfig, type VideoScrollPosition } from "@/lib/video-scroll-data";
 
 export default function HomePage() {
   const settings = getSettings();
   const zoomPortalCfg = getZoomPortalConfig();
   const brandSlider = getBrandSliderConfig();
   const videoScrollCfg = getVideoScrollConfig();
+
+  /* Render the scroll-video section at exactly one slot in the page. */
+  const renderVideoScroll = (slot: VideoScrollPosition) =>
+    videoScrollCfg.enabled && videoScrollCfg.position === slot ? (
+      <VideoScrollSection config={videoScrollCfg} />
+    ) : null;
 
   const projects = getProjects()
     .filter((p) => p.featured)
@@ -63,6 +69,7 @@ export default function HomePage() {
         keywordsEnabled={settings.heroKeywordsEnabled}
         keywords={settings.heroKeywords}
       />
+      {renderVideoScroll("after-hero")}
       <BentoGrid
         label={settings.aboutLabel}
         title={settings.aboutTitle}
@@ -74,9 +81,11 @@ export default function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
+      {renderVideoScroll("after-bento")}
       {brandSlider.enabled && brandSlider.slides.length > 0 && (
         <BrandBannerSlider config={brandSlider} />
       )}
+      {renderVideoScroll("after-brand-slider")}
       <FeaturedProjects
         projects={projects}
         label={settings.projectsLabel}
@@ -86,13 +95,15 @@ export default function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
-      {videoScrollCfg.enabled && <VideoScrollSection config={videoScrollCfg} />}
+      {renderVideoScroll("after-projects")}
       {zoomPortalCfg.enabled && <ZoomPortal config={zoomPortalCfg} />}
+      {renderVideoScroll("after-zoom-portal")}
       <StepsSection
         labelSize={settings.sectionLabelSize}
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
+      {renderVideoScroll("after-steps")}
       <TestimonialsSection
         testimonials={testimonials}
         label={settings.testimonialsLabel}
@@ -100,6 +111,7 @@ export default function HomePage() {
         labelSize={settings.sectionLabelSize}
         titleSize={settings.sectionTitleSize}
       />
+      {renderVideoScroll("after-testimonials")}
       {settings.homeBlogEnabled !== false && latestArticles.length > 0 && (
         <LatestArticles
           articles={latestArticles}
@@ -112,6 +124,7 @@ export default function HomePage() {
           bodySize={settings.sectionBodySize}
         />
       )}
+      {renderVideoScroll("after-articles")}
       <InstagramFeed />
       <CTABanner />
     </>

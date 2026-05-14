@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { VideoScrollConfig } from "@/lib/video-scroll-data";
+import {
+  POSITION_OPTIONS,
+  DEFAULT_VIDEO_SCROLL_CONFIG,
+  type VideoScrollConfig,
+  type VideoScrollPosition,
+} from "@/lib/video-scroll-data";
 import { VideoUploader } from "@/components/admin/ImageUploader";
 
 export default function VideoScrollAdminPage() {
@@ -40,6 +45,22 @@ export default function VideoScrollAdminPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  /* Reset to the optimal smooth defaults, but keep the user's video, poster,
+     position and enabled flag — those are user-specific choices. */
+  function resetToSmoothDefaults() {
+    if (!cfg) return;
+    if (!confirm("هترجع كل الإعدادات للقيم الافتراضية المُحسَّنة؟ (الفيديو والموضع والظهور لن يتغيروا)")) {
+      return;
+    }
+    setCfg({
+      ...DEFAULT_VIDEO_SCROLL_CONFIG,
+      videoSrc: cfg.videoSrc,
+      posterSrc: cfg.posterSrc,
+      position: cfg.position,
+      enabled: cfg.enabled,
+    });
   }
 
   if (!cfg) return <div className="text-warmgray">جاري التحميل...</div>;
@@ -99,6 +120,46 @@ export default function VideoScrollAdminPage() {
               enabled={cfg.showOverlay}
               onToggle={() => set("showOverlay", !cfg.showOverlay)}
             />
+          </div>
+        </Card>
+
+        {/* Position picker */}
+        <Card title="موضع القسم في الصفحة" icon="📍">
+          <p className="-mt-2 mb-3 text-xs text-warmgray">
+            اختر فين تحب القسم يظهر في الصفحة الرئيسية. الأقسام مرتّبة من فوق
+            لتحت.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {POSITION_OPTIONS.map((opt) => {
+              const selected = cfg.position === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() =>
+                    set("position", opt.value as VideoScrollPosition)
+                  }
+                  className={`flex items-center justify-between rounded-lg border px-4 py-3 text-right text-sm transition-colors ${
+                    selected
+                      ? "border-gold bg-gold/10 text-gold"
+                      : "border-gray-200 bg-white text-charcoal hover:border-gold/40 hover:bg-gold/5"
+                  }`}
+                >
+                  <span
+                    className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
+                      selected
+                        ? "border-gold bg-gold"
+                        : "border-gray-300 bg-white"
+                    }`}
+                  >
+                    {selected && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                    )}
+                  </span>
+                  <span className="flex-1 pr-3">{opt.label}</span>
+                </button>
+              );
+            })}
           </div>
         </Card>
 
@@ -203,6 +264,57 @@ export default function VideoScrollAdminPage() {
               أصغر = استجابة فورية. أكبر = حركة ناعمة بتأخير. (الموصى به: 0.5–0.8)
             </p>
           </div>
+
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 text-amber-600">💡</span>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-amber-900">
+                  مش متأكد من الإعدادات الأنسب؟
+                </p>
+                <p className="mt-0.5 text-[10px] text-amber-700">
+                  ارجع للإعدادات الافتراضية المُحسَّنة (سكروب سلس + سرعة
+                  مناسبة). فيديوك وموضعه ما يتغيروش.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={resetToSmoothDefaults}
+                className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-amber-700"
+              >
+                ⟲ استعادة الافتراضي
+              </button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Skip button */}
+        <Card title="زر التخطي" icon="⏭️">
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
+            <div>
+              <span className="text-sm font-medium text-charcoal">
+                إظهار زر التخطي
+              </span>
+              <p className="text-xs text-warmgray">
+                زر صغير في ركن الفيديو، لو الزائر مش عايز يكمل السكروب على
+                القسم
+              </p>
+            </div>
+            <Toggle
+              enabled={cfg.showSkip}
+              onToggle={() => set("showSkip", !cfg.showSkip)}
+            />
+          </div>
+
+          {cfg.showSkip && (
+            <Input
+              label="نص الزر"
+              value={cfg.skipText}
+              onChange={(v) => set("skipText", v)}
+              placeholder="تخطي"
+              hint="مثال: تخطي · Skip · ﹥﹥"
+            />
+          )}
         </Card>
 
         {/* Appearance */}
