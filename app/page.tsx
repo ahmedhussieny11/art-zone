@@ -12,7 +12,8 @@ import LatestArticles from "@/components/LatestArticles";
 import { getProjects, getTestimonials, getSettings, getHomePageArticles, getBrandSliderConfig } from "@/lib/data";
 import { getZoomPortalConfig } from "@/lib/zoom-portal-data";
 import { getVideoScrollConfig } from "@/lib/video-scroll-data";
-import type { VideoScrollPosition } from "@/lib/video-scroll-config";
+import { getHomeLayoutConfig } from "@/lib/home-layout-data";
+import type { HomeSectionId } from "@/lib/home-layout-config";
 import { getSiteLocale } from "@/lib/get-site-locale";
 import { getDict, t } from "@/lib/locale-dict";
 import { getLocalizedSettings } from "@/lib/localized-settings";
@@ -24,6 +25,7 @@ import {
   getLocalizedVideoScrollConfig,
   getLocalizedZoomPortalConfig,
 } from "@/lib/localized-entities";
+import { Fragment, type ReactNode } from "react";
 
 export default async function HomePage() {
   const locale = await getSiteLocale();
@@ -32,12 +34,7 @@ export default async function HomePage() {
   const zoomPortalCfg = getLocalizedZoomPortalConfig(getZoomPortalConfig(), locale);
   const brandSlider = getLocalizedBrandSliderConfig(getBrandSliderConfig(), locale);
   const videoScrollCfg = getLocalizedVideoScrollConfig(getVideoScrollConfig(), locale);
-
-  /* Render the scroll-video section at exactly one slot in the page. */
-  const renderVideoScroll = (slot: VideoScrollPosition) =>
-    videoScrollCfg.enabled && videoScrollCfg.position === slot ? (
-      <VideoScrollSection config={videoScrollCfg} />
-    ) : null;
+  const homeLayout = getHomeLayoutConfig(videoScrollCfg.position);
 
   const projects = getLocalizedProjects(
     getProjects().filter((p) => p.featured),
@@ -74,8 +71,8 @@ export default async function HomePage() {
     };
   });
 
-  return (
-    <>
+  const sectionNodes: Record<HomeSectionId, ReactNode> = {
+    hero: (
       <HeroSection
         label={settings.heroLabel}
         title={settings.heroTitle}
@@ -87,7 +84,10 @@ export default async function HomePage() {
         keywordsEnabled={settings.heroKeywordsEnabled}
         keywords={settings.heroKeywords}
       />
-      {renderVideoScroll("after-hero")}
+    ),
+    "video-scroll":
+      videoScrollCfg.enabled ? <VideoScrollSection config={videoScrollCfg} /> : null,
+    bento: (
       <BentoGrid
         label={settings.aboutLabel}
         title={settings.aboutTitle}
@@ -99,11 +99,12 @@ export default async function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
-      {renderVideoScroll("after-bento")}
-      {brandSlider.enabled && brandSlider.slides.length > 0 && (
+    ),
+    "brand-slider":
+      brandSlider.enabled && brandSlider.slides.length > 0 ? (
         <BrandBannerSlider config={brandSlider} />
-      )}
-      {renderVideoScroll("after-brand-slider")}
+      ) : null,
+    projects: (
       <FeaturedProjects
         projects={projects}
         viewAllLabel={t(dict, "featured.viewAll")}
@@ -114,9 +115,9 @@ export default async function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
-      {renderVideoScroll("after-projects")}
-      {zoomPortalCfg.enabled && <ZoomPortal config={zoomPortalCfg} />}
-      {renderVideoScroll("after-zoom-portal")}
+    ),
+    "zoom-portal": zoomPortalCfg.enabled ? <ZoomPortal config={zoomPortalCfg} /> : null,
+    steps: (
       <StepsSection
         label={settings.processLabel}
         title={settings.processTitle}
@@ -126,7 +127,8 @@ export default async function HomePage() {
         titleSize={settings.sectionTitleSize}
         bodySize={settings.sectionBodySize}
       />
-      {renderVideoScroll("after-steps")}
+    ),
+    testimonials: (
       <TestimonialsSection
         testimonials={testimonials}
         label={settings.testimonialsLabel}
@@ -134,8 +136,9 @@ export default async function HomePage() {
         labelSize={settings.sectionLabelSize}
         titleSize={settings.sectionTitleSize}
       />
-      {renderVideoScroll("after-testimonials")}
-      {settings.homeBlogEnabled !== false && latestArticles.length > 0 && (
+    ),
+    articles:
+      settings.homeBlogEnabled !== false && latestArticles.length > 0 ? (
         <LatestArticles
           articles={latestArticles}
           label={settings.homeBlogLabel}
@@ -149,10 +152,19 @@ export default async function HomePage() {
           dateLocale={locale === "en" ? "en-US" : "ar-SA"}
           contentDir={locale === "ar" ? "rtl" : "ltr"}
         />
-      )}
-      {renderVideoScroll("after-articles")}
-      <InstagramFeed />
-      <CTABanner />
+      ) : null,
+    instagram: <InstagramFeed />,
+    cta: <CTABanner />,
+  };
+
+  return (
+    <>
+      {homeLayout.sections.map((item) => {
+        if (!item.enabled) return null;
+        const node = sectionNodes[item.id];
+        if (!node) return null;
+        return <Fragment key={item.id}>{node}</Fragment>;
+      })}
     </>
   );
 }

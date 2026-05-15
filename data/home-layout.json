@@ -1,0 +1,48 @@
+{
+  "sections": [
+    {
+      "id": "hero",
+      "enabled": true
+    },
+    {
+      "id": "bento",
+      "enabled": true
+    },
+    {
+      "id": "video-scroll",
+      "enabled": true
+    },
+    {
+      "id": "brand-slider",
+      "enabled": true
+    },
+    {
+      "id": "projects",
+      "enabled": true
+    },
+    {
+      "id": "zoom-portal",
+      "enabled": true
+    },
+    {
+      "id": "steps",
+      "enabled": true
+    },
+    {
+      "id": "testimonials",
+      "enabled": true
+    },
+    {
+      "id": "articles",
+      "enabled": true
+    },
+    {
+      "id": "instagram",
+      "enabled": true
+    },
+    {
+      "id": "cta",
+      "enabled": true
+    }
+  ]
+}

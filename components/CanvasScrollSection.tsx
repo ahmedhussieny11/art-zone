@@ -7,8 +7,9 @@ import type { VideoScrollConfig } from "@/lib/video-scroll-config";
 import {
   buildFrameUrls,
   drawImageCover,
-  preloadImages,
+  nearestLoadedFrame,
   progressToFrameIndex,
+  startStagedPreload,
 } from "@/lib/scroll-frame-sequence";
 import { useSiteLocale } from "@/components/SiteProviders";
 
@@ -49,10 +50,11 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
 
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const imagesRef = useRef<(HTMLImageElement | undefined)[]>([]);
   const frameIdxRef = useRef(-1);
   const [loadPct, setLoadPct] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  const [isPlayable, setIsPlayable] = useState(false);
+  const [isFullyLoaded, setIsFullyLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const frameUrls = buildFrameUrls(
@@ -63,37 +65,35 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
   );
 
   useEffect(() => {
-    let cancelled = false;
-    setIsReady(false);
+    setIsPlayable(false);
+    setIsFullyLoaded(false);
     setLoadError(null);
     setLoadPct(0);
     imagesRef.current = [];
     frameIdxRef.current = -1;
 
-    preloadImages(frameUrls, (loaded, total) => {
-      if (!cancelled) setLoadPct(Math.round((loaded / total) * 100));
-    })
-      .then((images) => {
-        if (cancelled) return;
+    const cancel = startStagedPreload(frameUrls, {
+      onProgress: ({ loaded, total }) => {
+        setLoadPct(Math.round((loaded / total) * 100));
+      },
+      onPlayable: (images) => {
         imagesRef.current = images;
-        setIsReady(true);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setLoadError(
-            err instanceof Error ? err.message : "فشل تحميل الإطارات",
-          );
-        }
-      });
+        setIsPlayable(true);
+      },
+      onComplete: (images) => {
+        imagesRef.current = images;
+        setIsFullyLoaded(true);
+        setLoadPct(100);
+      },
+      onError: (err) => setLoadError(err.message),
+    });
 
-    return () => {
-      cancelled = true;
-    };
+    return cancel;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- URLs derived from path + count
-  }, [framesPath, frameCount]);
+  }, [framesPath, frameCount, frameExtension]);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isPlayable) return;
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     const images = imagesRef.current;
@@ -118,9 +118,9 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
 
     const paintFrame = (index: number) => {
       if (index === frameIdxRef.current) return;
-      frameIdxRef.current = index;
-      const img = images[index];
+      const img = nearestLoadedFrame(images, index);
       if (!img) return;
+      frameIdxRef.current = index;
       drawImageCover(ctx, img, canvas.clientWidth, canvas.clientHeight);
     };
 
@@ -166,7 +166,7 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
       trigger.kill();
       setHtmlScrub(false);
     };
-  }, [isReady, scrollMultiplier, scrub, frameCount, framesPath]);
+  }, [isPlayable, scrollMultiplier, scrub, frameCount, framesPath]);
 
   const handleSkip = () => {
     const section = sectionRef.current;
@@ -207,7 +207,7 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
           />
         )}
 
-        {!isReady && !loadError && (
+        {!isPlayable && !loadError && (
           <div
             className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4"
             style={{ backgroundColor: `${bgColor}F0` }}
@@ -220,6 +220,16 @@ export default function CanvasScrollSection({ config }: CanvasScrollSectionProps
             >
               {loadPct}% — {t("videoScroll.preparing")}
             </span>
+          </div>
+        )}
+
+        {isPlayable && !isFullyLoaded && !loadError && (
+          <div className="pointer-events-none absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1 text-[9px] tracking-wider text-white/70">
+            <span
+              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full opacity-80"
+              style={{ backgroundColor: accentColor }}
+            />
+            <span>{loadPct}%</span>
           </div>
         )}
 

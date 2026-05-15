@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
-  POSITION_OPTIONS,
   DEFAULT_VIDEO_SCROLL_CONFIG,
   type VideoScrollConfig,
-  type VideoScrollPosition,
 } from "@/lib/video-scroll-config";
+import { ADMIN_UI_BASE } from "@/lib/admin-path";
 export default function VideoScrollAdminPage() {
   const [cfg, setCfg] = useState<VideoScrollConfig | null>(null);
   const [saving, setSaving] = useState(false);
@@ -88,7 +88,10 @@ export default function VideoScrollAdminPage() {
                 تفعيل القسم
               </span>
               <p className="text-xs text-warmgray">
-                إظهار / إخفاء القسم في الصفحة الرئيسية
+                تشغيل محتوى السكروب — للظهور على الهوم فعّل القسم أيضاً من{" "}
+                <Link href={`${ADMIN_UI_BASE}/home-layout`} className="text-gold hover:underline">
+                  ترتيب الصفحة الرئيسية
+                </Link>
               </p>
             </div>
             <Toggle
@@ -113,44 +116,15 @@ export default function VideoScrollAdminPage() {
           </div>
         </Card>
 
-        {/* Position picker */}
         <Card title="موضع القسم في الصفحة" icon="📍">
-          <p className="-mt-2 mb-3 text-xs text-warmgray">
-            اختر فين تحب القسم يظهر في الصفحة الرئيسية. الأقسام مرتّبة من فوق
-            لتحت.
+          <p className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-warmgray">
+            ترتيب هذا القسم مع باقي أقسام الصفحة الرئيسية (قبل/بعد أي قسم وإظهار/إخفاء)
+            من صفحة{" "}
+            <Link href={`${ADMIN_UI_BASE}/home-layout`} className="font-medium text-gold hover:underline">
+              ترتيب الصفحة الرئيسية
+            </Link>
+            .
           </p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {POSITION_OPTIONS.map((opt) => {
-              const selected = cfg.position === opt.value;
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() =>
-                    set("position", opt.value as VideoScrollPosition)
-                  }
-                  className={`flex items-center justify-between rounded-lg border px-4 py-3 text-right text-sm transition-colors ${
-                    selected
-                      ? "border-gold bg-gold/10 text-gold"
-                      : "border-gray-200 bg-white text-charcoal hover:border-gold/40 hover:bg-gold/5"
-                  }`}
-                >
-                  <span
-                    className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
-                      selected
-                        ? "border-gold bg-gold"
-                        : "border-gray-300 bg-white"
-                    }`}
-                  >
-                    {selected && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    )}
-                  </span>
-                  <span className="flex-1 pr-3">{opt.label}</span>
-                </button>
-              );
-            })}
-          </div>
         </Card>
 
         <Card title="إطارات السكروب" icon="🖼️">
