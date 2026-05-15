@@ -1,9 +1,8 @@
 /**
- * Shared video-scroll section config (types + defaults + UI labels).
+ * Shared scroll-section config (canvas frame sequence).
  * Safe to import from Client Components — no Node.js APIs.
  */
 
-/** كل موضع ممكن يظهر فيه القسم على الصفحة الرئيسية. */
 export type VideoScrollPosition =
   | "after-hero"
   | "after-bento"
@@ -29,8 +28,12 @@ export const POSITION_OPTIONS: { value: VideoScrollPosition; label: string }[] =
 export interface VideoScrollConfig {
   enabled: boolean;
   position: VideoScrollPosition;
-  videoSrc: string;
-  posterSrc: string;
+  /** مجلد الإطارات تحت public، مثال: /frames */
+  framesPath: string;
+  /** عدد الإطارات frame_0001 … frame_NNNN */
+  frameCount: number;
+  /** jpg أو webp */
+  frameExtension: string;
   label: string;
   title: string;
   description: string;
@@ -45,20 +48,19 @@ export interface VideoScrollConfig {
   skipText: string;
 }
 
-/** إعدادات افتراضية مُحسَّنة للسلاسة. */
 export const DEFAULT_VIDEO_SCROLL_CONFIG: VideoScrollConfig = {
   enabled: true,
-  position: "after-projects",
-  videoSrc: "/scroll-video.mp4",
-  posterSrc: "",
+  position: "after-bento",
+  framesPath: "/frames",
+  frameCount: 925,
+  frameExtension: "jpg",
   label: "تجربة بصرية",
   title: "اكتشف التفاصيل بحركة سلسة",
   description:
     "حرّك صفحتك للأسفل وشاهد كل لقطة تنبض بالحياة — كل بكسل مضبوط على إيقاع تمريرك.",
   scrollHint: "مرّر للأسفل",
-  /** مسافة أطول = تغيير أقل في وقت الفيديو لكل بكسل سكروب = أخف على المعالج */
-  scrollMultiplier: 14,
-  scrub: 0.08,
+  scrollMultiplier: 20,
+  scrub: 1,
   bgColor: "#2C2C2C",
   accentColor: "#C9A96E",
   vignetteOpacity: 0.55,

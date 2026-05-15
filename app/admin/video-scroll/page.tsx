@@ -7,8 +7,6 @@ import {
   type VideoScrollConfig,
   type VideoScrollPosition,
 } from "@/lib/video-scroll-config";
-import { VideoUploader } from "@/components/admin/ImageUploader";
-
 export default function VideoScrollAdminPage() {
   const [cfg, setCfg] = useState<VideoScrollConfig | null>(null);
   const [saving, setSaving] = useState(false);
@@ -39,9 +37,12 @@ export default function VideoScrollAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...cfg,
-          /* ثابت من الكود — مفيش تحكم من لوحة الإدارة */
+          framesPath: cfg.framesPath ?? DEFAULT_VIDEO_SCROLL_CONFIG.framesPath,
+          frameCount: cfg.frameCount ?? DEFAULT_VIDEO_SCROLL_CONFIG.frameCount,
+          frameExtension:
+            cfg.frameExtension ?? DEFAULT_VIDEO_SCROLL_CONFIG.frameExtension,
           scrollMultiplier: DEFAULT_VIDEO_SCROLL_CONFIG.scrollMultiplier,
-          scrub: DEFAULT_VIDEO_SCROLL_CONFIG.scrub,
+          scrub: 1,
         }),
       });
       setSaved(true);
@@ -60,10 +61,10 @@ export default function VideoScrollAdminPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-charcoal">
-            قسم الفيديو التفاعلي
+            قسم السكروب التفاعلي
           </h1>
           <p className="mt-1 text-sm text-warmgray">
-            تحكم في الفيديو والنصوص والموضع والمظهر
+            إطارات canvas والنصوص والموضع والمظهر
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -99,10 +100,10 @@ export default function VideoScrollAdminPage() {
           <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
             <div>
               <span className="text-sm font-medium text-charcoal">
-                إظهار النصوص فوق الفيديو
+                إظهار النصوص فوق المشهد
               </span>
               <p className="text-xs text-warmgray">
-                لو معطّل، يظهر الفيديو فقط بدون عنوان أو وصف
+                لو معطّل، تظهر الإطارات فقط بدون عنوان أو وصف
               </p>
             </div>
             <Toggle
@@ -152,24 +153,44 @@ export default function VideoScrollAdminPage() {
           </div>
         </Card>
 
-        {/* Video */}
-        <Card title="الفيديو" icon="🎬">
-          <VideoUploader
-            label="ملف الفيديو"
-            value={cfg.videoSrc}
-            onChange={(v) => set("videoSrc", v)}
-            uploadEndpoint="/api/admin/upload-video-scroll"
-            fieldName="file"
-            hint="ارفع أي فيديو (MP4 / MOV / واتساب …) — السيرفر يحوّله لـ H.264 مع keyframe كل إطار لسلاسة السكروب. لو ظهر تحذير: ثبّت FFmpeg في PATH، أو أضف في `.env` مسارًا كاملًا لـ ffmpeg.exe تحت FFMPEG_PATH أو FFMPEG_BIN، ثم أعد الرفع. لو ملف ffmpeg.exe ناقص من node_modules شغّل: npm rebuild ffmpeg-static"
-          />
-
+        <Card title="إطارات السكروب" icon="🖼️">
+          <p className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] leading-relaxed text-warmgray">
+            ضع ملفات الإطارات في مجلد <code className="text-charcoal">frames/</code> داخل المشروع (مرتبطة
+            بـ <code className="text-charcoal">public/frames</code>). التسمية:{" "}
+            <code className="text-charcoal">frame_0001.jpg</code> …
+          </p>
           <Input
-            label="صورة معاينة (Poster) — اختياري"
-            value={cfg.posterSrc}
-            onChange={(v) => set("posterSrc", v)}
+            label="مسار الإطارات (تحت public)"
+            value={cfg.framesPath}
+            onChange={(v) => set("framesPath", v)}
             dir="ltr"
-            placeholder="/poster.jpg"
-            hint="تظهر قبل اكتمال تحميل الفيديو"
+            placeholder="/frames"
+            hint="مثال: /frames"
+          />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-charcoal">
+              عدد الإطارات
+            </label>
+            <input
+              type="number"
+              min={2}
+              max={2000}
+              value={cfg.frameCount}
+              onChange={(e) => set("frameCount", Number(e.target.value) || 1)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-gold"
+            />
+            <p className="mt-1 text-[10px] text-warmgray">
+              frame_0001.{cfg.frameExtension} … frame_
+              {String(cfg.frameCount).padStart(4, "0")}.{cfg.frameExtension}
+            </p>
+          </div>
+          <Input
+            label="امتداد الملف"
+            value={cfg.frameExtension}
+            onChange={(v) => set("frameExtension", v.replace(/^\./, ""))}
+            dir="ltr"
+            placeholder="jpg"
+            hint="jpg أو webp"
           />
         </Card>
 
@@ -212,7 +233,7 @@ export default function VideoScrollAdminPage() {
                 إظهار زر التخطي
               </span>
               <p className="text-xs text-warmgray">
-                زر صغير في ركن الفيديو، لو الزائر مش عايز يكمل السكروب على
+                زر صغير في ركن المشهد، لو الزائر مش عايز يكمل السكروب على
                 القسم
               </p>
             </div>
