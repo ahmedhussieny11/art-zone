@@ -1,9 +1,17 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSiteLocale } from "@/components/SiteProviders";
 import type { SiteLocale } from "@/lib/locale-dict";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const STEPS_SCRUB_CLASS = "steps-scroll-scrub";
 
 const STEP_ICONS: React.ReactNode[] = [
   (
@@ -82,6 +90,11 @@ const EN_DEFAULT_STEP_TEXT: typeof DEFAULT_STEP_TEXT = [
   },
 ];
 
+/** مسافة السكروب لكل مرحلة */
+const SCROLL_VH_PER_STEP = 48;
+/** scrub بسيط — تتبع مباشر مع السكروب */
+const SCROLL_SCRUB = 0.65;
+
 export type ProcessStepItem = { step: string; title: string; description: string };
 
 type StepSlide = { number: string; title: string; description: string; icon: React.ReactNode };
@@ -101,8 +114,6 @@ function buildSlides(processSteps: ProcessStepItem[] | undefined, locale: SiteLo
     icon: STEP_ICONS[i],
   }));
 }
-
-type PanelState = "before" | "pinned" | "after";
 
 interface StepsSectionProps {
   label?: string;
@@ -128,75 +139,66 @@ export default function StepsSection({
   const n = slides.length;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [prevStep, setPrevStep] = useState(0);
-  const [panelState, setPanelState] = useState<PanelState>("before");
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  const update = useCallback(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    const rect = wrapper.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const scrolled = -rect.top;
-    const scrollable = wrapper.offsetHeight - vh;
-
-    if (scrolled <= 0) {
-      setPanelState("before");
-      setScrollProgress(0);
-      setActiveStep(0);
-    } else if (scrolled >= scrollable) {
-      setPanelState("after");
-      setScrollProgress(1);
-      setActiveStep(n - 1);
-    } else {
-      setPanelState("pinned");
-      const progress = scrolled / scrollable;
-      setScrollProgress(progress);
-      const idx = Math.min(Math.floor(progress * n), n - 1);
-      setActiveStep((cur) => {
-        if (idx !== cur) {
-          setPrevStep(cur);
-          return idx;
-        }
-        return cur;
-      });
-    }
-  }, [activeStep, n]);
+  const stRef = useRef<ScrollTrigger | null>(null);
 
   useEffect(() => {
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update, { passive: true });
-    update();
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+    const wrapper = wrapperRef.current;
+    const panel = panelRef.current;
+    if (!wrapper || !panel || n < 1) return;
+
+    const setHtmlScrub = (on: boolean) => {
+      document.documentElement.classList.toggle(STEPS_SCRUB_CLASS, on);
     };
-  }, [update]);
+
+    const applyProgress = (progress: number) => {
+      setActiveStep(
+        n <= 1 ? 0 : Math.min(n - 1, Math.round(progress * (n - 1))),
+      );
+    };
+
+    const trigger = ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top top",
+      end: "bottom bottom",
+      pin: panel,
+      pinSpacing: false,
+      scrub: SCROLL_SCRUB,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => applyProgress(self.progress),
+      onEnter: () => setHtmlScrub(true),
+      onLeave: () => setHtmlScrub(false),
+      onEnterBack: () => setHtmlScrub(true),
+      onLeaveBack: () => setHtmlScrub(false),
+    });
+
+    stRef.current = trigger;
+    applyProgress(trigger.progress);
+    ScrollTrigger.refresh();
+
+    const onResize = () => ScrollTrigger.refresh();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      trigger.kill();
+      stRef.current = null;
+      setHtmlScrub(false);
+    };
+  }, [n]);
 
   const goToStep = useCallback(
     (stepIndex: number) => {
-      const wrapper = wrapperRef.current;
-      if (!wrapper) return;
-      const vh = window.innerHeight;
-      const scrollable = wrapper.offsetHeight - vh;
-      const stepProgress = (stepIndex + 0.1) / n;
-      const targetScroll = wrapper.offsetTop + stepProgress * scrollable;
-      window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      const st = stRef.current;
+      if (!st) return;
+      const progress = n <= 1 ? 0 : stepIndex / (n - 1);
+      const scrollY = st.start + progress * (st.end - st.start);
+      window.scrollTo({ top: scrollY, behavior: "smooth" });
     },
-    [n]
+    [n],
   );
-
-  const panelCls =
-    panelState === "pinned"
-      ? "fixed inset-x-0 top-0 z-10 h-screen"
-      : panelState === "after"
-        ? "absolute inset-x-0 bottom-0 h-screen"
-        : "absolute inset-x-0 top-0 h-screen";
-
-  const direction = activeStep > prevStep ? 1 : -1;
-  const current = slides[activeStep];
 
   const LABEL_SIZE: Record<string, string> = {
     xs: "text-xs",
@@ -221,117 +223,124 @@ export default function StepsSection({
   const labelCls = LABEL_SIZE[labelSize] ?? LABEL_SIZE.sm;
   const titleCls = TITLE_SIZE[titleSize] ?? TITLE_SIZE["5xl"];
   const bodyCls = BODY_SIZE[bodySize] ?? BODY_SIZE.lg;
-
-  const progressPct = scrollProgress * 100;
+  const contentDir = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <div ref={wrapperRef} className="relative bg-offwhite" style={{ height: `${n * 100}vh` }}>
-      <div className={`${panelCls} bg-offwhite`}>
-        <div className="flex h-full items-center">
-          <div className="mx-auto w-full max-w-7xl px-6">
-            <div className="grid items-center gap-12 lg:grid-cols-5 lg:gap-20">
-              <div className="lg:col-span-2">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <span className={`mb-4 inline-block font-semibold tracking-[0.15em] text-gold ${labelCls}`}>{label}</span>
-                  <h2 className={`font-serif font-light leading-tight text-charcoal ${titleCls}`}>{title}</h2>
-                  <p className={`mt-5 leading-relaxed text-warmgray ${bodyCls}`}>{description}</p>
-                </motion.div>
+    <div
+      ref={wrapperRef}
+      className="relative bg-offwhite"
+      style={{ height: `${n * SCROLL_VH_PER_STEP}vh` }}
+    >
+      <div ref={panelRef} className="relative z-10 h-screen w-full overflow-hidden bg-offwhite">
+        <div className="relative flex h-full items-center">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+            <div
+              dir="ltr"
+              className="flex flex-col gap-8 sm:gap-10 lg:flex-row lg:items-center lg:gap-12 xl:gap-20"
+            >
+              <motion.div
+                dir={contentDir}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className={`order-1 min-w-0 flex-1 lg:order-2 lg:max-w-md ${
+                  contentDir === "rtl" ? "text-right" : "text-left"
+                }`}
+              >
+                <span className={`mb-3 inline-block font-semibold tracking-[0.2em] text-gold sm:mb-4 ${labelCls}`}>
+                  {label}
+                </span>
+                <h2 className={`font-serif font-light leading-[1.15] text-charcoal ${titleCls}`}>{title}</h2>
+                <p className={`mt-4 leading-relaxed text-warmgray/90 sm:mt-5 ${bodyCls}`}>{description}</p>
+              </motion.div>
 
-                <div className="mt-12 hidden lg:flex lg:flex-col lg:gap-0">
-                  <div className="relative w-fit">
-                    <div className="absolute right-[17px] top-[17px] w-px bg-warmgray/15" style={{ height: `calc(100% - 34px)` }} />
-                    <div
-                      className="absolute right-[17px] top-[17px] w-px origin-top bg-gold transition-none"
-                      style={{ height: `${progressPct}%`, maxHeight: "calc(100% - 34px)" }}
-                    />
-
-                    {slides.map((step, i) => {
-                      const isActive = i === activeStep;
-                      const isPast = i < activeStep;
-
-                      return (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => goToStep(i)}
-                          className="group relative flex cursor-pointer items-center gap-4 py-3 focus:outline-none"
-                          aria-label={t("steps.goToStep", { n: String(i + 1), title: step.title })}
-                        >
-                          <div
-                            className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-500 ${
-                              isActive
-                                ? "border-gold bg-gold scale-110 shadow-md shadow-gold/30"
-                                : isPast
-                                  ? "border-gold bg-gold"
-                                  : "border-warmgray/25 bg-offwhite group-hover:border-gold/50"
-                            }`}
-                          >
-                            <span
-                              className={`text-sm font-semibold leading-none transition-colors duration-500 ${
-                                isActive || isPast ? "text-white" : "text-warmgray/50 group-hover:text-warmgray"
-                              }`}
-                            >
-                              {i + 1}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-3">
-                <div className="relative h-56 overflow-hidden md:h-48">
-                  <AnimatePresence initial={false} mode="sync">
-                    <motion.div
-                      key={activeStep}
-                      initial={{ opacity: 0.4, y: direction > 0 ? "105%" : "-105%" }}
-                      animate={{ opacity: 1, y: "0%" }}
-                      exit={{ opacity: 0.4, y: direction > 0 ? "-105%" : "105%" }}
-                      transition={{
-                        duration: 0.55,
-                        ease: [0.32, 0.72, 0, 1],
-                      }}
-                      className="absolute inset-0 rounded-3xl border border-gold/20 bg-white p-8 shadow-xl shadow-charcoal/5 md:p-10 dark:border-white/10 dark:bg-zinc-900/40"
-                    >
-                      <div className="flex h-full items-start gap-5">
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gold text-white shadow-md shadow-gold/30">
-                          {current.icon}
-                        </div>
-                        <div>
-                          <span className="mb-2 block font-serif text-sm tracking-[0.12em] text-gold/80">{current.number}</span>
-                          <h3 className="font-serif text-xl font-light text-charcoal md:text-2xl">{current.title}</h3>
-                          <p className="mt-3 text-base leading-relaxed text-warmgray">{current.description}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                <div className="mt-10 flex justify-center gap-3 lg:hidden">
-                  {slides.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => goToStep(i)}
-                      aria-label={t("steps.stepDot", { n: String(i + 1) })}
-                      className={`h-2 rounded-full transition-all duration-500 focus:outline-none ${
-                        i === activeStep ? "w-8 bg-gold" : i < activeStep ? "w-2 bg-gold/50" : "w-2 bg-warmgray/25"
-                      }`}
-                    />
-                  ))}
-                </div>
+              <div className="order-2 min-w-0 flex-1 lg:order-1 lg:max-w-xl">
+                <StepsTextColumn
+                  slides={slides}
+                  activeStep={activeStep}
+                  contentDir={contentDir}
+                  onGoToStep={goToStep}
+                  t={t}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function StepsTextColumn({
+  slides,
+  activeStep,
+  contentDir,
+  onGoToStep,
+  t,
+}: {
+  slides: StepSlide[];
+  activeStep: number;
+  contentDir: "rtl" | "ltr";
+  onGoToStep: (i: number) => void;
+  t: (key: string, vars?: Record<string, string>) => string;
+}) {
+  return (
+    <div
+      dir={contentDir}
+      className="flex max-h-[min(70vh,500px)] w-full flex-col gap-2 overflow-y-auto overscroll-contain pr-1 sm:gap-2.5 lg:max-h-[calc(100vh-5rem)] lg:pr-0"
+    >
+      {slides.map((step, i) => {
+        const isActive = i === activeStep;
+
+        return (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onGoToStep(i)}
+            aria-current={isActive ? "step" : undefined}
+            aria-label={t("steps.goToStep", { n: String(i + 1), title: step.title })}
+            className={`w-full cursor-pointer rounded-2xl border text-start transition-all duration-300 ease-out focus:outline-none ${
+              isActive
+                ? "border-gold/30 bg-white px-4 py-4 shadow-md shadow-charcoal/10 sm:px-5 sm:py-5"
+                : "border-transparent bg-white/40 px-3 py-3 opacity-75 hover:opacity-90 sm:px-4 sm:py-3.5"
+            }`}
+          >
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div
+                className={`flex shrink-0 items-center justify-center rounded-xl bg-gold text-white transition-all duration-300 ${
+                  isActive ? "h-12 w-12 shadow-md shadow-gold/25 sm:h-14 sm:w-14" : "h-10 w-10 opacity-80"
+                }`}
+              >
+                {step.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="mb-0.5 block font-serif text-xs tracking-[0.12em] text-gold/90">
+                  {step.number}
+                </span>
+                <h3
+                  className={`font-serif font-light leading-snug transition-all duration-300 ${
+                    isActive
+                      ? "text-lg text-charcoal sm:text-xl"
+                      : "text-base text-charcoal/80"
+                  }`}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  className={`mt-1.5 leading-relaxed transition-all duration-300 ${
+                    isActive
+                      ? "text-sm text-warmgray sm:text-[0.95rem]"
+                      : "text-xs text-warmgray/80 sm:text-sm"
+                  }`}
+                >
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
