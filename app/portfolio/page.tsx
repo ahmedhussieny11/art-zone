@@ -25,7 +25,7 @@ interface PortfolioPageProps {
 export default async function PortfolioPage({ searchParams }: PortfolioPageProps) {
   const { cat } = await searchParams;
   const dict = getDict(await getSiteLocale());
-  const allProjects = getProjects();
+  const allProjects = await getProjects();
   const filtered = cat ? allProjects.filter((p) => p.category === cat) : allProjects;
 
   return (

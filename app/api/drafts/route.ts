@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getArticleByOriginalUrl } from "@/lib/data";
 
 /** n8n duplicate-check for articles by originalUrl. */
 export const dynamic = "force-dynamic";
@@ -14,6 +15,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "originalUrl is required" }, { status: 400 });
   }
 
-  // TODO: query database for existing article by originalUrl
-  return NextResponse.json({ exists: false, originalUrl });
+  const article = await getArticleByOriginalUrl(originalUrl);
+  if (!article) {
+    return NextResponse.json({ exists: false, originalUrl });
+  }
+
+  return NextResponse.json({
+    exists: true,
+    originalUrl,
+    id: article._id,
+    slug: article.slug,
+  });
 }

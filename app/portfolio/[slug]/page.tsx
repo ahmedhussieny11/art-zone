@@ -26,7 +26,7 @@ function categoryLabel(dict: ReturnType<typeof getDict>, category: string): stri
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const raw = getProjectBySlug(slug);
+  const raw = await getProjectBySlug(slug);
   if (!raw) return {};
   const locale = await getSiteLocale();
   const project = getLocalizedProject(raw, locale);
@@ -43,14 +43,14 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const raw = getProjectBySlug(slug);
+  const raw = await getProjectBySlug(slug);
   if (!raw) notFound();
 
   const locale = await getSiteLocale();
   const dict = getDict(locale);
   const project = getLocalizedProject(raw, locale);
 
-  const relatedRaw = getProjects().filter((p) => p.category === project.category && p._id !== project._id).slice(0, 3);
+  const relatedRaw = (await getProjects()).filter((p) => p.category === project.category && p._id !== project._id).slice(0, 3);
   const related = getLocalizedProjects(relatedRaw, locale);
 
   const galleryImages = (project.gallery ?? []).map((s) => String(s).trim()).filter(Boolean);

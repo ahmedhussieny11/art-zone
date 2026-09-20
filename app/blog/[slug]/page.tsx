@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const raw = getArticleBySlug(slug);
+  const raw = await getArticleBySlug(slug);
   if (!raw) return {};
 
   const locale = await getSiteLocale();
@@ -62,14 +62,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const raw = getArticleBySlug(slug);
+  const raw = await getArticleBySlug(slug);
   if (!raw || !raw.published) notFound();
 
   const locale = await getSiteLocale();
   const dict = getDict(locale);
   const article = getLocalizedArticle(raw, locale);
 
-  const relatedRaw = getPublishedArticles()
+  const relatedRaw = (await getPublishedArticles())
     .filter((a) => a._id !== article._id && (a.category === article.category || a.tags.some((tg) => article.tags.includes(tg))))
     .slice(0, 3);
   const related = relatedRaw.map((a) => getLocalizedArticle(a, locale));

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getProjects, saveProject, generateId, type Project } from "@/lib/data";
 
 export async function GET() {
-  return NextResponse.json(getProjects());
+  return NextResponse.json(await getProjects());
 }
 
 export async function POST(request: Request) {
@@ -21,6 +21,6 @@ export async function POST(request: Request) {
     featured: body.featured || false,
     createdAt: new Date().toISOString(),
   };
-  saveProject(project);
+  await saveProject(project);
   return NextResponse.json(project, { status: 201 });
 }

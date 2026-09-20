@@ -2,12 +2,12 @@ import { getProjects, getMessages, getTestimonials, getServices, getArticles } f
 import Link from "next/link";
 import { ADMIN_UI_BASE } from "@/lib/admin-path";
 
-export default function AdminDashboard() {
-  const projects = getProjects();
+export default async function AdminDashboard() {
+  const projects = await getProjects();
   const messages = getMessages();
   const testimonials = getTestimonials();
   const services = getServices();
-  const articles = getArticles();
+  const articles = await getArticles();
   const unreadMessages = messages.filter((m) => !m.read).length;
 
   const stats = [

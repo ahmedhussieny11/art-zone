@@ -3,10 +3,10 @@ import { getPublishedArticles, getProjects, getPublicSiteUrl } from "@/lib/data"
 
 export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getPublicSiteUrl();
-  const articles = getPublishedArticles();
-  const projects = getProjects();
+  const articles = await getPublishedArticles();
+  const projects = await getProjects();
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },

@@ -37,7 +37,7 @@ export default async function HomePage() {
   const homeLayout = getHomeLayoutConfig(videoScrollCfg.position);
 
   const projects = getLocalizedProjects(
-    getProjects().filter((p) => p.featured),
+    (await getProjects()).filter((p) => p.featured),
     locale
   ).map((p) => ({
     _id: p._id,
@@ -57,7 +57,7 @@ export default async function HomePage() {
       : undefined,
   }));
 
-  const latestArticles = getHomePageArticles(settings).map((a) => {
+  const latestArticles = (await getHomePageArticles(settings)).map((a) => {
     const loc = getLocalizedArticle(a, locale);
     return {
       _id: loc._id,

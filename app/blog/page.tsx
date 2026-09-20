@@ -42,7 +42,7 @@ export default async function BlogPage({
   const badgeCorner = isRtl ? "right-4" : "left-4";
   const readMoreHover = isRtl ? "group-hover:-translate-x-1" : "group-hover:translate-x-1";
 
-  const allArticles = getPublishedArticles();
+  const allArticles = await getPublishedArticles();
 
   const usedCategories = Array.from(new Set(allArticles.map((a) => a.category).filter(Boolean)));
   const usedTags = Array.from(new Set(allArticles.flatMap((a) => a.tags || []).filter(Boolean)));

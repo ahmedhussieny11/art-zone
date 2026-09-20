@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getArticles, saveArticle, generateId, type Article } from "@/lib/data";
 
 export async function GET() {
-  return NextResponse.json(getArticles());
+  return NextResponse.json(await getArticles());
 }
 
 export async function POST(request: Request) {
@@ -24,9 +24,10 @@ export async function POST(request: Request) {
     seoDescription: body.seoDescription || body.excerpt || "",
     seoKeywords: body.seoKeywords || [],
     ogImage: body.ogImage || body.coverImage || null,
+    originalUrl: body.originalUrl || null,
     createdAt: now,
     updatedAt: now,
   };
-  saveArticle(article);
+  await saveArticle(article);
   return NextResponse.json(article, { status: 201 });
 }

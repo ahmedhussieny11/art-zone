@@ -1,5 +1,20 @@
 import fs from "fs";
 import path from "path";
+import {
+  getArticleById,
+  getArticleByOriginalUrl as getArticleByOriginalUrlDb,
+  getArticleBySlug as getArticleBySlugDb,
+  listArticles,
+  removeArticle,
+  upsertArticle,
+} from "@/lib/articles-db";
+import {
+  getProjectById,
+  getProjectBySlugDb,
+  listProjects,
+  removeProject,
+  upsertProject,
+} from "@/lib/projects-db";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -523,26 +538,21 @@ const DEFAULT_SETTINGS: SiteSettings = {
   darkModeEnabled: false,
 };
 
-// Projects
-export function getProjects(): Project[] {
-  return readJson("projects.json", DEFAULT_PROJECTS);
+// Projects (MySQL)
+export async function getProjects(): Promise<Project[]> {
+  return listProjects();
 }
-export function getProject(id: string): Project | undefined {
-  return getProjects().find((p) => p._id === id);
+export async function getProject(id: string): Promise<Project | undefined> {
+  return getProjectById(id);
 }
-export function getProjectBySlug(slug: string): Project | undefined {
-  const decoded = decodeURIComponent(slug);
-  return getProjects().find((p) => p.slug === decoded || p.slug === slug);
+export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
+  return getProjectBySlugDb(slug);
 }
-export function saveProject(project: Project): void {
-  const projects = getProjects();
-  const idx = projects.findIndex((p) => p._id === project._id);
-  if (idx >= 0) projects[idx] = project;
-  else projects.push(project);
-  writeJson("projects.json", projects);
+export async function saveProject(project: Project): Promise<void> {
+  await upsertProject(project);
 }
-export function deleteProject(id: string): void {
-  writeJson("projects.json", getProjects().filter((p) => p._id !== id));
+export async function deleteProject(id: string): Promise<void> {
+  await removeProject(id);
 }
 
 // Services
@@ -617,6 +627,8 @@ export interface Article {
   seoDescription: string;
   seoKeywords: string[];
   ogImage: string | null;
+  /** مصدر المقال (لـ n8n / منع التكرار) */
+  originalUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -645,6 +657,7 @@ const DEFAULT_ARTICLES: Article[] = [
     seoDescription: "اكتشف أبرز اتجاهات التصميم الداخلي لعام 2025 من الألوان الطبيعية والمواد المستدامة إلى البساطة الفاخرة.",
     seoKeywords: ["اتجاهات التصميم الداخلي", "ديكور 2025", "تصميم داخلي حديث"],
     ogImage: null,
+    originalUrl: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -671,25 +684,23 @@ const DEFAULT_ARTICLES: Article[] = [
     seoDescription: "دليل شامل لاختيار لوحة الألوان المثالية لمنزلك مع نصائح عملية من خبراء التصميم الداخلي في آرت زون.",
     seoKeywords: ["اختيار ألوان المنزل", "ألوان الديكور", "نصائح تصميم"],
     ogImage: null,
+    originalUrl: null,
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
   },
 ];
 
-export function getArticles(): Article[] {
-  const raw = readJson<Article[]>("articles.json", DEFAULT_ARTICLES);
-  return raw.map((a) => ({
-    ...a,
-    showOnHome: a.showOnHome === true,
-  }));
+// Articles (MySQL)
+export async function getArticles(): Promise<Article[]> {
+  return listArticles();
 }
-export function getPublishedArticles(): Article[] {
-  return getArticles().filter((a) => a.published);
+export async function getPublishedArticles(): Promise<Article[]> {
+  return (await getArticles()).filter((a) => a.published);
 }
 
 /** مقالات قسم المدونة في الصفحة الرئيسية: المقالات المفعّل لها «عرض في الرئيسية» أولاً، وإلا آخر المنشور */
-export function getHomePageArticles(settings: SiteSettings): Article[] {
-  const published = getPublishedArticles()
+export async function getHomePageArticles(settings: SiteSettings): Promise<Article[]> {
+  const published = (await getPublishedArticles())
     .slice()
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   const limit = Math.min(6, Math.max(1, Number(settings.homeBlogLimit) || 3));
@@ -700,22 +711,22 @@ export function getHomePageArticles(settings: SiteSettings): Article[] {
   return published.slice(0, limit);
 }
 
-export function getArticle(id: string): Article | undefined {
-  return getArticles().find((a) => a._id === id);
+export async function getArticle(id: string): Promise<Article | undefined> {
+  return getArticleById(id);
 }
-export function getArticleBySlug(slug: string): Article | undefined {
-  const decoded = decodeURIComponent(slug);
-  return getArticles().find((a) => a.slug === decoded || a.slug === slug);
+export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
+  return getArticleBySlugDb(slug);
 }
-export function saveArticle(article: Article): void {
-  const articles = getArticles();
-  const idx = articles.findIndex((a) => a._id === article._id);
-  if (idx >= 0) articles[idx] = article;
-  else articles.unshift(article);
-  writeJson("articles.json", articles);
+export async function getArticleByOriginalUrl(
+  originalUrl: string
+): Promise<Article | undefined> {
+  return getArticleByOriginalUrlDb(originalUrl);
 }
-export function deleteArticle(id: string): void {
-  writeJson("articles.json", getArticles().filter((a) => a._id !== id));
+export async function saveArticle(article: Article): Promise<void> {
+  await upsertArticle(article);
+}
+export async function deleteArticle(id: string): Promise<void> {
+  await removeArticle(id);
 }
 
 // Settings
